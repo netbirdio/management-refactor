@@ -5,8 +5,12 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/netbirdio/management-integrations/integrations"
+
+	"management/internal/modules/settings"
 	"management/internal/modules/users"
 	"management/internal/shared/api"
+	"management/internal/shared/api/rest"
 	"management/internal/shared/db"
 	"management/internal/shared/permissions"
 	"management/pkg/logging"
@@ -31,10 +35,12 @@ func NewServer() *Server {
 
 	store := db.NewStore(ctx, dbConn)
 
-	router := api.NewRouter()
+	router := rest.NewRouter()
 
+	extraSettingsManager := integrations.NewManager()
 	permissionsManager := permissions.NewManager(store)
 	userManager := users.NewManager(store, permissions.NewManager(store))
+	settingsManager := settings.NewManager(store, userManager, extraSettingsManager)
 
 	return &Server{
 		httpServer: &http.Server{

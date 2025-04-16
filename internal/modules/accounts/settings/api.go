@@ -1,4 +1,4 @@
-package users
+package settings
 
 import (
 	"encoding/json"
@@ -11,8 +11,6 @@ import (
 	"management/internal/shared/db"
 	"management/internal/shared/errors"
 	"management/internal/shared/permissions"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
 )
 
 type handler struct {
@@ -28,11 +26,11 @@ func newHandler(manager *Manager, permissionsManager permissions.Manager) *handl
 }
 
 func (h *handler) RegisterAPI(router *mux.Router) {
-	router.HandleFunc("/users", h.getAllUsers).Methods("GET", "OPTIONS")
-	router.HandleFunc("/users/{userId}", h.getUser).Methods("GET", "OPTIONS")
+	router.HandleFunc("/account/{accountID}/settings", h.GetAllUsers).Methods("GET", "OPTIONS")
+	router.HandleFunc("/account/{accountID}/settings", h.GetUser).Methods("PUT", "OPTIONS")
 }
 
-func (h *handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
+func (h *handler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	userAuth, err := nbcontext.GetUserAuthFromContext(r.Context())
 	if err != nil {
 		util.WriteError(r.Context(), err, w)
@@ -56,7 +54,7 @@ func (h *handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(users)
 }
 
-func (h *handler) getUser(w http.ResponseWriter, r *http.Request) {
+func (h *handler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userAuth, err := nbcontext.GetUserAuthFromContext(r.Context())
 	if err != nil {
 		util.WriteError(r.Context(), err, w)

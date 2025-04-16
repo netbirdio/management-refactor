@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"os"
 	"path/filepath"
 	"runtime"
 
@@ -18,8 +17,6 @@ import (
 
 const (
 	storeSqliteFileName = "licenses.db"
-	storeDataDirEnv     = "NB_STORE_DATA_DIR"
-	storeDefaultDataDir = "/var/lib/netbird"
 )
 
 // DatabaseConn is a wrapper around the gorm database connection
@@ -39,7 +36,7 @@ func NewDatabaseConn(ctx context.Context) (*DatabaseConn, error) {
 	var db *gorm.DB
 	switch Engine(cfg.Engine) {
 	case SqliteStoreEngine:
-		db, err = openSQLiteDB()
+		db, err = openSQLiteDB(cfg)
 	case PostgresStoreEngine:
 		db, err = openPostgresDB(cfg)
 	case MemoryStoreEngine:
@@ -58,6 +55,9 @@ func NewDatabaseConn(ctx context.Context) (*DatabaseConn, error) {
 	}
 
 	conns := runtime.NumCPU()
+	if Engine(cfg.Engine) == SqliteStoreEngine {
+		conns = 1
+	}
 	sql.SetMaxOpenConns(conns)
 	return &DatabaseConn{
 		DB: db,
@@ -75,19 +75,14 @@ func openMemoryDB() (*gorm.DB, error) {
 }
 
 // openSQLiteDB opens a new connection to a SQLite database
-func openSQLiteDB() (*gorm.DB, error) {
+func openSQLiteDB(cfg *config) (*gorm.DB, error) {
 	storeStr := fmt.Sprintf("%s?cache=shared", storeSqliteFileName)
 	if runtime.GOOS == "windows" {
 		// To avoid `The process cannot access the file because it is being used by another process` on Windows
 		storeStr = storeSqliteFileName
 	}
 
-	dataDir, ok := os.LookupEnv(storeDataDirEnv)
-	if !ok {
-		dataDir = storeDefaultDataDir
-	}
-
-	file := filepath.Join(dataDir, storeStr)
+	file := filepath.Join(cfg.DataDir, storeStr)
 	db, err := gorm.Open(sqlite.Open(file), getGormConfig())
 	if err != nil {
 		return nil, err
@@ -98,12 +93,7 @@ func openSQLiteDB() (*gorm.DB, error) {
 
 // openPostgresDB opens a new connection to a Postgres database
 func openPostgresDB(cfg *config) (*gorm.DB, error) {
-	dsn, ok := os.LookupEnv(cfg.PostgresDsnEnv)
-	if !ok {
-		return nil, fmt.Errorf("%s is not set", cfg.PostgresDsnEnv)
-	}
-
-	db, err := gorm.Open(postgres.Open(dsn), getGormConfig())
+	db, err := gorm.Open(postgres.Open(cfg.PostgresDsn), getGormConfig())
 	if err != nil {
 		return nil, err
 	}
