@@ -15,16 +15,36 @@ const (
 type Transaction interface {
 	Commit() error
 	Rollback() error
+	AddEvent(event func())
 }
 
 type storeTx struct {
-	db *gorm.DB
+	db     *gorm.DB
+	events []func()
 }
 
 func (t *storeTx) Commit() error {
-	return t.db.Commit().Error
+	err := t.db.Commit().Error
+	if err != nil {
+		t.commitEvents()
+	}
+	return err
 }
 
 func (t *storeTx) Rollback() error {
 	return t.db.Rollback().Error
+}
+
+func (t *storeTx) AddEvent(event func()) {
+	if t.events == nil {
+		t.events = make([]func(), 0)
+	}
+	t.events = append(t.events, event)
+}
+
+func (t *storeTx) commitEvents() {
+	for _, event := range t.events {
+		event()
+	}
+	t.events = nil
 }

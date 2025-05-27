@@ -15,8 +15,11 @@ import (
 const channelBufferSize = 100
 
 type UpdateMessage struct {
-	Update     *proto.SyncResponse
-	NetworkMap *types.NetworkMap
+	Update        *proto.SyncResponse
+	NetworkMap    *types.NetworkMap
+	PeerManager   *nbpeer.Manager
+	PolicyManager *nbpeer.PolicyManager
+	GroupManager  *nbpeer.GroupManager
 }
 
 type UpdateChannel struct {

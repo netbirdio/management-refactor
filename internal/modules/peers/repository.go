@@ -10,6 +10,7 @@ type Repository interface {
 	GetPeerByID(tx db.Transaction, strength db.LockingStrength, accountID, peerId string) (*types.Peer, error)
 	GetPeers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]*types.Peer, error)
 	GetFilteredPeers(tx db.Transaction, strength db.LockingStrength, accountID string, nameFilter, ipFilter string) ([]*types.Peer, error)
+	UpdatePeer(tx db.Transaction, peer *types.Peer) error
 }
 
 type repository struct {
@@ -62,4 +63,8 @@ func (r *repository) GetFilteredPeers(tx db.Transaction, strength db.LockingStre
 		return nil, err
 	}
 	return peers, nil
+}
+
+func (r *repository) UpdatePeer(tx db.Transaction, peer *types.Peer) error {
+	return r.store.Update(tx, peer)
 }
