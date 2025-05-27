@@ -40,13 +40,13 @@ type GRPCServer struct {
 	settingsManager settings.Manager
 	wgKey           wgtypes.Key
 	proto.UnimplementedManagementServiceServer
-	peersUpdateManager *PeersUpdateManager
-	config             *types.Config
-	secretsManager     SecretsManager
-	appMetrics         telemetry.AppMetrics
-	ephemeralManager   *EphemeralManager
-	peerLocks          sync.Map
-	authManager        auth.Manager
+	updateChannel    *UpdateChannel
+	config           *types.Config
+	secretsManager   SecretsManager
+	appMetrics       telemetry.AppMetrics
+	ephemeralManager *EphemeralManager
+	peerLocks        sync.Map
+	authManager      auth.Manager
 }
 
 // NewServer creates a new Management server
@@ -55,7 +55,7 @@ func NewServer(
 	config *types.Config,
 	accountManager account.Manager,
 	settingsManager settings.Manager,
-	peersUpdateManager *PeersUpdateManager,
+	updateChannel *UpdateChannel,
 	secretsManager SecretsManager,
 	appMetrics telemetry.AppMetrics,
 	ephemeralManager *EphemeralManager,
@@ -69,7 +69,7 @@ func NewServer(
 	if appMetrics != nil {
 		// update gauge based on number of connected peers which is equal to open gRPC streams
 		err = appMetrics.GRPCMetrics().RegisterConnectedStreams(func() int64 {
-			return int64(len(peersUpdateManager.peerChannels))
+			return int64(len(updateChannel.peerChannels))
 		})
 		if err != nil {
 			return nil, err
@@ -79,14 +79,14 @@ func NewServer(
 	return &GRPCServer{
 		wgKey: key,
 		// peerKey -> event channel
-		peersUpdateManager: peersUpdateManager,
-		accountManager:     accountManager,
-		settingsManager:    settingsManager,
-		config:             config,
-		secretsManager:     secretsManager,
-		authManager:        authManager,
-		appMetrics:         appMetrics,
-		ephemeralManager:   ephemeralManager,
+		updateChannel:    updateChannel,
+		accountManager:   accountManager,
+		settingsManager:  settingsManager,
+		config:           config,
+		secretsManager:   secretsManager,
+		authManager:      authManager,
+		appMetrics:       appMetrics,
+		ephemeralManager: ephemeralManager,
 	}, nil
 }
 
@@ -184,7 +184,7 @@ func (s *GRPCServer) Sync(req *proto.EncryptedMessage, srv proto.ManagementServi
 		return err
 	}
 
-	updates := s.peersUpdateManager.CreateChannel(ctx, peer.ID)
+	updates := s.updateChannel.CreateChannel(ctx, peer.ID)
 
 	s.ephemeralManager.OnPeerConnected(ctx, peer)
 
@@ -262,7 +262,7 @@ func (s *GRPCServer) cancelPeerRoutines(ctx context.Context, accountID string, p
 	if err != nil {
 		log.WithContext(ctx).Errorf("failed to disconnect peer %s properly: %v", peer.Key, err)
 	}
-	s.peersUpdateManager.CloseChannel(ctx, peer.ID)
+	s.updateChannel.CloseChannel(ctx, peer.ID)
 	s.secretsManager.CancelRefresh(peer.ID)
 	s.ephemeralManager.OnPeerDisconnected(ctx, peer)
 

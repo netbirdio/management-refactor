@@ -6,10 +6,10 @@ import (
 	"context"
 
 	"github.com/netbirdio/netbird/management/server/status"
-	"github.com/netbirdio/netbird/management/server/store"
 
 	"management/internal/modules/users/types"
 	"management/internal/shared/activity"
+	"management/internal/shared/db"
 	"management/internal/shared/permissions/modules"
 	"management/internal/shared/permissions/operations"
 	"management/internal/shared/permissions/roles"
@@ -22,20 +22,23 @@ type Manager interface {
 	ValidateUserPermissions(ctx context.Context, accountID, userID string, module modules.Module, operation operations.Operation) (bool, error)
 	ValidateRoleModuleAccess(ctx context.Context, accountID string, role roles.RolePermissions, module modules.Module, operation operations.Operation) bool
 	ValidateAccountAccess(ctx context.Context, accountID string, user *types.User, allowOwnerAndAdmin bool) error
+	Init(userManager userManager)
 }
 
 type userManager interface {
-	GetUserByUserID(ctx context.Context, lockingStrength store.LockingStrength, userID string) (*types.User, error)
+	GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*types.User, error)
 }
 
 type managerImpl struct {
 	userManager userManager
 }
 
-func NewManager(userManager userManager) Manager {
-	return &managerImpl{
-		userManager: userManager,
-	}
+func NewManager() Manager {
+	return &managerImpl{}
+}
+
+func (m *managerImpl) Init(userManager userManager) {
+	m.userManager = userManager
 }
 
 func (m *managerImpl) ValidateUserPermissions(
@@ -49,7 +52,7 @@ func (m *managerImpl) ValidateUserPermissions(
 		return true, nil
 	}
 
-	user, err := m.userManager.GetUserByUserID(ctx, store.LockingStrengthShare, userID)
+	user, err := m.userManager.GetUserByID(ctx, nil, db.LockingStrengthShare, userID)
 	if err != nil {
 		return false, err
 	}

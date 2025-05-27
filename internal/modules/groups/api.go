@@ -1,4 +1,4 @@
-package settings
+package groups
 
 import (
 	"encoding/json"
@@ -28,21 +28,21 @@ func newHandler(manager *Manager, permissionsManager permissions.Manager) *handl
 }
 
 func (h *handler) RegisterEndpoints(router *mux.Router) {
-	router.HandleFunc("/account/{accountID}/settings", h.getSettings).Methods("GET", "OPTIONS")
-	router.HandleFunc("/account/{accountID}/settings", h.updateSettings).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/groups", h.getAllGroups).Methods("GET", "OPTIONS")
+	router.HandleFunc("/groups", h.createGroup).Methods("POST", "OPTIONS")
+	router.HandleFunc("/groups/{groupId}", h.updateGroup).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/groups/{groupId}", h.getGroup).Methods("GET", "OPTIONS")
+	router.HandleFunc("/groups/{groupId}", h.deleteGroup).Methods("DELETE", "OPTIONS")
 }
 
-func (h *handler) getSettings(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getAllUsers(w http.ResponseWriter, r *http.Request) {
 	userAuth, err := nbcontext.GetUserAuthFromContext(r.Context())
 	if err != nil {
 		util.WriteError(r.Context(), err, w)
 		return
 	}
 
-	vars := mux.Vars(r)
-	accountId := vars["accountID"]
-
-	allowed, err := h.permissionsManager.ValidateUserPermissions(r.Context(), accountId, userAuth.UserId, modules.Settings, operations.Read)
+	allowed, err := h.permissionsManager.ValidateUserPermissions(r.Context(), userAuth.AccountId, userAuth.UserId, modules.Users, operations.Read)
 	if err != nil {
 		util.WriteError(r.Context(), errors.NewPermissionValidationError(err), w)
 		return
@@ -51,7 +51,7 @@ func (h *handler) getSettings(w http.ResponseWriter, r *http.Request) {
 		util.WriteError(r.Context(), errors.NewPermissionDeniedError(), w)
 	}
 
-	users, err := h.manager.GetSettings(r.Context(), nil, db.LockingStrengthShare, accountId)
+	users, err := h.manager.GetAllUsers(r.Context(), nil, db.LockingStrengthShare, userAuth.AccountId)
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
@@ -59,17 +59,14 @@ func (h *handler) getSettings(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewEncoder(w).Encode(users)
 }
 
-func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getUser(w http.ResponseWriter, r *http.Request) {
 	userAuth, err := nbcontext.GetUserAuthFromContext(r.Context())
 	if err != nil {
 		util.WriteError(r.Context(), err, w)
 		return
 	}
 
-	vars := mux.Vars(r)
-	accountId := vars["accountID"]
-
-	allowed, err := h.permissionsManager.ValidateUserPermissions(r.Context(), accountId, userAuth.UserId, modules.Settings, operations.Write)
+	allowed, err := h.permissionsManager.ValidateUserPermissions(r.Context(), userAuth.AccountId, userAuth.UserId, modules.Users, operations.Read)
 	if err != nil {
 		util.WriteError(r.Context(), errors.NewPermissionValidationError(err), w)
 		return
@@ -78,10 +75,13 @@ func (h *handler) updateSettings(w http.ResponseWriter, r *http.Request) {
 		util.WriteError(r.Context(), errors.NewPermissionDeniedError(), w)
 	}
 
-	settings, err := h.manager.UpdateSettings(r.Context(), nil, db.LockingStrengthShare, accountId)
+	vars := mux.Vars(r)
+	userId := vars["userId"]
+
+	user, err := h.manager.GetUserByID(r.Context(), nil, db.LockingStrengthShare, userId)
 	if err != nil {
 		http.Error(w, "Not Found", http.StatusNotFound)
 		return
 	}
-	_ = json.NewEncoder(w).Encode(settings)
+	_ = json.NewEncoder(w).Encode(user)
 }

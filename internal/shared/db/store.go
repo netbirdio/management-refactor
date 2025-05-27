@@ -84,3 +84,15 @@ func (s *Store) GetMany(tx Transaction, strength LockingStrength, dest interface
 func (s *Store) Delete(value interface{}) error {
 	return s.db.Delete(value).Error
 }
+
+func (s *Store) Update(tx Transaction, value interface{}) error {
+	return s.Using(tx).Save(value).Error
+}
+
+func (s *Store) Update(tx Transaction, value interface{}) error {
+	return s.Using(tx).Save(value).Error
+}
+
+func (s *Store) Update(tx Transaction, value interface{}) error {
+	return s.Using(tx).Save(value).Error
+}

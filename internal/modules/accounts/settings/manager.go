@@ -4,11 +4,15 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gorilla/mux"
 	"github.com/netbirdio/netbird/management/server/integrations/extra_settings"
+	types2 "github.com/netbirdio/netbird/management/server/types"
 
 	"management/internal/modules/accounts/settings/types"
 	"management/internal/modules/users"
+	"management/internal/shared/activity"
 	"management/internal/shared/db"
+	"management/internal/shared/permissions"
 	"management/pkg/logging"
 )
 
@@ -18,14 +22,20 @@ type Manager struct {
 	repository           Repository
 	extraSettingsManager extra_settings.Manager
 	userManager          *users.Manager
+	eventManager         *activity.Manager
 }
 
-func NewManager(store *db.Store, userManager *users.Manager, extraSettingsManager extra_settings.Manager) *Manager {
-	return &Manager{
-		repository:           newRepository(store),
+func NewManager(store *db.Store, router *mux.Router, eventManager *activity.Manager, permissionsManager permissions.Manager, userManager *users.Manager, extraSettingsManager extra_settings.Manager) *Manager {
+	repo := newRepository(store)
+	m := &Manager{
+		repository:           repo,
 		extraSettingsManager: extraSettingsManager,
 		userManager:          userManager,
+		eventManager:         eventManager,
 	}
+	api := newHandler(m, permissionsManager)
+	api.RegisterEndpoints(router)
+	return m
 }
 
 func (m *Manager) GetExtraSettingsManager() extra_settings.Manager {
@@ -76,5 +86,9 @@ func (m *Manager) GetExtraSettings(ctx context.Context, tx db.Transaction, accou
 }
 
 func (m *Manager) UpdateExtraSettings(ctx context.Context, accountID, userID string, extraSettings *types.ExtraSettings) (bool, error) {
-	return m.extraSettingsManager.UpdateExtraSettings(ctx, accountID, userID, extraSettings)
+	return m.extraSettingsManager.UpdateExtraSettings(ctx, accountID, userID, (*types2.ExtraSettings)(extraSettings))
+}
+
+func (m *Manager) UpdateSettings(ctx context.Context, tx db.Transaction, settings *types.Settings) (*types.Settings, error) {
+	return m.repository.UpdateSettings(tx, settings)
 }

@@ -27,7 +27,7 @@ func newHandler(manager *Manager, permissionsManager permissions.Manager) *handl
 	}
 }
 
-func (h *handler) RegisterAPI(router *mux.Router) {
+func (h *handler) RegisterEndpoints(router *mux.Router) {
 	router.HandleFunc("/accounts/{accountId}", h.updateAccount).Methods("PUT", "OPTIONS")
 	router.HandleFunc("/accounts/{accountId}", h.deleteAccount).Methods("DELETE", "OPTIONS")
 	router.HandleFunc("/accounts", h.getAllAccounts).Methods("GET", "OPTIONS")

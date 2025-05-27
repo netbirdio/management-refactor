@@ -8,7 +8,7 @@ import (
 
 // NewRouter creates and returns a mux.Router configured with default middleware
 // and placeholder endpoints. You can add your own handlers here or in other files.
-func NewRouter() http.Handler {
+func NewRouter() *mux.Router {
 	r := mux.NewRouter()
 
 	// Attach middlewares

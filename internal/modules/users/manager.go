@@ -3,6 +3,8 @@ package users
 import (
 	"context"
 
+	"github.com/gorilla/mux"
+
 	"management/internal/modules/users/types"
 	"management/internal/shared/db"
 	"management/internal/shared/permissions"
@@ -12,14 +14,14 @@ import (
 var log = logging.LoggerForThisPackage()
 
 type Manager struct {
-	repo    Repository
-	handler *handler
+	repo Repository
 }
 
-func NewManager(store *db.Store, permissionsManager permissions.Manager) *Manager {
+func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager) *Manager {
 	repo := newRepository(store)
 	m := &Manager{repo: repo}
-	m.handler = newHandler(m, permissionsManager)
+	api := newHandler(m, permissionsManager)
+	api.RegisterEndpoints(router)
 	return m
 }
 
