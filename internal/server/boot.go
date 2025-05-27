@@ -4,9 +4,12 @@ package server
 
 import (
 	"context"
+	"net/http"
+
+	"management/internal/shared/activity"
+	"management/internal/shared/activity/sqlite"
 	"management/internal/shared/api/rest"
 	"management/internal/shared/db"
-	"net/http"
 )
 
 func (s *Server) Store() *db.Store {
@@ -29,5 +32,16 @@ func (s *Server) HttpServer() *http.Server {
 			Addr:    ":8080", // or from a config file
 			Handler: router,
 		}
+	})
+}
+
+func (s *Server) EventStore() activity.Store {
+	return Create(s, func() activity.Store {
+		ctx := context.Background()
+		store, err := sqlite.NewSQLiteStore(ctx, "dataDir", "encryptionKey")
+		if err != nil {
+			log.Fatalf("error while creating event store: %s", err)
+		}
+		return store
 	})
 }
