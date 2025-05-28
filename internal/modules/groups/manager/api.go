@@ -1,4 +1,4 @@
-package groups
+package manager
 
 import (
 	"encoding/json"

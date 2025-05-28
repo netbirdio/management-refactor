@@ -5,7 +5,6 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"management/internal/modules/networks"
 	"management/internal/modules/networks/resources"
 	"management/internal/modules/networks/routers"
 	"management/internal/shared/db"

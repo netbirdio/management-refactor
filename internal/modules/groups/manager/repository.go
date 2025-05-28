@@ -1,4 +1,4 @@
-package groups
+package manager
 
 import (
 	"management/internal/shared/db"

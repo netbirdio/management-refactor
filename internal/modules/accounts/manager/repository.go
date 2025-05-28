@@ -1,4 +1,4 @@
-package accounts
+package manager
 
 import "management/internal/shared/db"
 

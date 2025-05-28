@@ -1,4 +1,4 @@
-package server
+package network_map
 
 import (
 	"context"
