@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	RunInTx(fn func(tx db.Transaction) error) error
+	Store() *db.Store
 	CreateNetwork(tx db.Transaction, network *networks.Network) error
 	UpdateNetwork(tx db.Transaction, network *networks.Network) error
 	DeleteNetwork(tx db.Transaction, network *networks.Network) error
@@ -54,4 +54,8 @@ func (r *repository) GetAccountNetworks(tx db.Transaction, lockingStrength db.Lo
 		return nil, err
 	}
 	return networks, nil
+}
+
+func (r *repository) Store() *db.Store {
+	return r.store
 }

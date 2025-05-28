@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/netbirdio/netbird/management/server/account"
+	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 
 	"management/internal/modules/networks"
@@ -24,11 +24,16 @@ type managerImpl struct {
 	routersManager     routers.Manager
 }
 
-func NewManager(store *db.Store, permissionsManager permissions.Manager, resourceManager resources.Manager, routersManager routers.Manager) resources.Manager {
+func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager, resourceManager resources.Manager, routersManager routers.Manager) networks.Manager {
 	repo := newRepository(store)
-	m := &managerImpl{repo: repo}
-	// api := newHandler(m, permissionsManager)
-	// api.RegisterEndpoints(router)
+	m := &managerImpl{
+		repo:               repo,
+		permissionsManager: permissionsManager,
+		resourcesManager:   resourceManager,
+		routersManager:     routersManager,
+	}
+	api := newHandler(m, permissionsManager)
+	api.RegisterEndpoints(router)
 	return m
 }
 
@@ -105,41 +110,19 @@ func (m *managerImpl) DeleteNetwork(ctx context.Context, tx db.Transaction, acco
 		return errors.NewPermissionDeniedError()
 	}
 
-	network, err := m.repo.GetNetworkByID(tx, db.LockingStrengthUpdate, accountID, networkID)
-	if err != nil {
-		return fmt.Errorf("failed to get network: %w", err)
-	}
+	return db.WithTx(m.repo.Store(), tx, func(tx db.Transaction) error {
 
-	resources, err := m.resourcesManager.GetNetworkResourcesByNetID(ctx, tx, db.LockingStrengthUpdate, accountID, userID, networkID)
-	if err != nil {
-		return fmt.Errorf("failed to get resources in network: %w", err)
-	}
+		sendEvent(tx, "network_deleted")
 
-	for _, resource := range resources {
-		err = m.resourcesManager.DeleteResource(ctx, tx, accountID, userID, networkID, resource.ID)
-		if err != nil {
-			return fmt.Errorf("failed to delete resource: %w", err)
+		if err := m.repo.DeleteNetwork(tx, &networks.Network{ID: networkID}); err != nil {
+			return fmt.Errorf("failed to delete network: %w", err)
 		}
-	}
 
-	routers, err := m.routersManager.GetNetworkRoutersByNetID(ctx, tx, db.LockingStrengthUpdate, accountID, userID, networkID)
-	if err != nil {
-		return fmt.Errorf("failed to get routers in network: %w", err)
-	}
+		tx.AddEvent(func() {
+			addActivityEvent("Network deleted")
+			// noop
+		})
 
-	for _, router := range routers {
-		err := m.routersManager.DeleteRouter(ctx, tx, accountID, userID, networkID, router.ID)
-		if err != nil {
-			return fmt.Errorf("failed to delete router: %w", err)
-		}
-	}
-
-	err = m.repo.DeleteNetwork(tx, &networks.Network{ID: networkID})
-	if err != nil {
-		return fmt.Errorf("failed to delete network: %w", err)
-	}
-
-	// TODO: send delete event with network
-
-	return nil
+		return nil
+	})
 }
