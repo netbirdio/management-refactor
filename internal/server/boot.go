@@ -32,7 +32,7 @@ func (s *Server) Store() *db.Store {
 
 func (s *Server) HttpServer() *http.Server {
 	return Create(s, func() *http.Server {
-		router := rest.NewRouter()
+		router := s.Router()
 
 		return &http.Server{
 			Addr:    ":8080", // or from a config file
@@ -53,7 +53,7 @@ func (s *Server) Metrics() *metrics.AppMetrics {
 
 func (s *Server) Router() *mux.Router {
 	return Create(s, func() *mux.Router {
-		return mux.NewRouter()
+		return rest.NewRouter()
 	})
 }
 
