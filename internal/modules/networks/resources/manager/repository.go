@@ -8,7 +8,7 @@ import (
 type Repository interface {
 	Store() *db.Store
 	GetResourcesByNetworkID(tx db.Transaction, strength db.LockingStrength, networkID string) ([]*resources.NetworkResource, error)
-	DeleteResource(tx db.Transaction, resourceID string) error
+	DeleteResource(tx db.Transaction, resource *resources.NetworkResource) error
 }
 
 type repository struct {
@@ -32,6 +32,6 @@ func (r *repository) GetResourcesByNetworkID(tx db.Transaction, strength db.Lock
 	return resources, nil
 }
 
-func (r *repository) DeleteResource(tx db.Transaction, resourceID string) error {
-	return r.store.Delete(tx, &resources.NetworkResource{ID: resourceID})
+func (r *repository) DeleteResource(tx db.Transaction, resource *resources.NetworkResource) error {
+	return r.store.Delete(tx, resource)
 }

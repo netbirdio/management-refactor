@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"management/internal/shared/db"
+	"management/internal/shared/hook"
 )
 
 type Manager interface {
@@ -12,4 +13,7 @@ type Manager interface {
 	CreateNetwork(ctx context.Context, tx db.Transaction, userID string, network *Network) (*Network, error)
 	UpdateNetwork(ctx context.Context, tx db.Transaction, userID string, network *Network) (*Network, error)
 	DeleteNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error
+
+	// events
+	OnNetworkDelete() *hook.Hook[*NetworkEvent]
 }

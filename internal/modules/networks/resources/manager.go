@@ -3,6 +3,7 @@ package resources
 import (
 	"context"
 
+	"management/internal/modules/networks"
 	"management/internal/shared/db"
 )
 
@@ -10,11 +11,11 @@ type Manager interface {
 	// Create
 
 	// Read
-	GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, accountID, userID, networkID string) ([]*NetworkResource, error)
+	GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, network *networks.Network) ([]*NetworkResource, error)
 
 	// Update
 
 	// Delete
-	DeleteResource(ctx context.Context, tx db.Transaction, accountID, userID, networkID, resourceID string) error
-	DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error
+	DeleteResource(ctx context.Context, tx db.Transaction, resource *NetworkResource) error
+	DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, network *networks.Network) error
 }

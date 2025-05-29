@@ -8,29 +8,23 @@ import (
 	"github.com/rs/xid"
 
 	"management/internal/modules/networks"
-	"management/internal/modules/networks/resources"
-	"management/internal/modules/networks/routers"
 	"management/internal/shared/db"
-	"management/internal/shared/errors"
+	"management/internal/shared/hook"
 	"management/internal/shared/permissions"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
 )
 
 type managerImpl struct {
-	repo               Repository
-	permissionsManager permissions.Manager
-	resourcesManager   resources.Manager
-	routersManager     routers.Manager
+	repo Repository
+
+	onNetworkDelete *hook.Hook[*networks.NetworkEvent]
 }
 
-func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager, resourceManager resources.Manager, routersManager routers.Manager) networks.Manager {
+func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager) networks.Manager {
 	repo := newRepository(store)
 	m := &managerImpl{
-		repo:               repo,
-		permissionsManager: permissionsManager,
-		resourcesManager:   resourceManager,
-		routersManager:     routersManager,
+		repo: repo,
+
+		onNetworkDelete: &hook.Hook[*networks.NetworkEvent]{},
 	}
 	api := newHandler(m, permissionsManager)
 	api.RegisterEndpoints(router)
@@ -38,29 +32,13 @@ func NewManager(store *db.Store, router *mux.Router, permissionsManager permissi
 }
 
 func (m *managerImpl) GetAllNetworks(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID, userID string) ([]*networks.Network, error) {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, accountID, userID, modules.Networks, operations.Read)
-	if err != nil {
-		return nil, errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return nil, errors.NewPermissionDeniedError()
-	}
-
 	return m.repo.GetAccountNetworks(tx, strength, accountID)
 }
 
 func (m *managerImpl) CreateNetwork(ctx context.Context, tx db.Transaction, userID string, network *networks.Network) (*networks.Network, error) {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, network.AccountID, userID, modules.Networks, operations.Write)
-	if err != nil {
-		return nil, errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return nil, errors.NewPermissionDeniedError()
-	}
-
 	network.ID = xid.New().String()
 
-	err = m.repo.CreateNetwork(tx, network)
+	err := m.repo.CreateNetwork(tx, network)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save network: %w", err)
 	}
@@ -71,27 +49,11 @@ func (m *managerImpl) CreateNetwork(ctx context.Context, tx db.Transaction, user
 }
 
 func (m *managerImpl) GetNetwork(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID, userID, networkID string) (*networks.Network, error) {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, accountID, userID, modules.Networks, operations.Read)
-	if err != nil {
-		return nil, errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return nil, errors.NewPermissionDeniedError()
-	}
-
 	return m.repo.GetNetworkByID(tx, strength, accountID, networkID)
 }
 
 func (m *managerImpl) UpdateNetwork(ctx context.Context, tx db.Transaction, userID string, network *networks.Network) (*networks.Network, error) {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, network.AccountID, userID, modules.Networks, operations.Write)
-	if err != nil {
-		return nil, errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return nil, errors.NewPermissionDeniedError()
-	}
-
-	_, err = m.repo.GetNetworkByID(tx, db.LockingStrengthUpdate, network.AccountID, network.ID)
+	_, err := m.repo.GetNetworkByID(tx, db.LockingStrengthUpdate, network.AccountID, network.ID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get network: %w", err)
 	}
@@ -102,27 +64,27 @@ func (m *managerImpl) UpdateNetwork(ctx context.Context, tx db.Transaction, user
 }
 
 func (m *managerImpl) DeleteNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, accountID, userID, modules.Networks, operations.Write)
-	if err != nil {
-		return errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return errors.NewPermissionDeniedError()
-	}
-
 	return db.WithTx(m.repo.Store(), tx, func(tx db.Transaction) error {
+		network := &networks.Network{ID: networkID}
 
-		sendEvent(tx, "network_deleted")
-
-		if err := m.repo.DeleteNetwork(tx, &networks.Network{ID: networkID}); err != nil {
-			return fmt.Errorf("failed to delete network: %w", err)
+		ev := &networks.NetworkEvent{
+			Context: ctx,
+			Tx:      tx,
+			Network: network,
 		}
 
-		tx.AddEvent(func() {
-			addActivityEvent("Network deleted")
-			// noop
+		err := m.OnNetworkDelete().Trigger(ev, func(ne *networks.NetworkEvent) error {
+			if err := m.repo.DeleteNetwork(ne.Tx, ne.Network); err != nil {
+				return fmt.Errorf("failed to delete network: %w", err)
+			}
+
+			tx.AddEvent(func() {
+				// addActivityEvent("Network deleted")
+				// noop
+			})
+			return nil
 		})
 
-		return nil
+		return err
 	})
 }

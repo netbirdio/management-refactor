@@ -2,57 +2,68 @@ package manager
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gorilla/mux"
 
+	"management/internal/modules/networks"
 	"management/internal/modules/networks/resources"
-	"management/internal/modules/networks/routers"
 	"management/internal/shared/db"
-	"management/internal/shared/errors"
-	"management/internal/shared/permissions"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
 )
 
 type managerImpl struct {
-	repo               Repository
-	permissionsManager permissions.Manager
-	resourcesManager   resources.Manager
-	routersManager     routers.Manager
+	repo           Repository
+	networkManager networks.Manager
 }
 
-func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager, resourceManager resources.Manager, routersManager routers.Manager) resources.Manager {
+func NewManager(store *db.Store, router *mux.Router, networkManager networks.Manager) resources.Manager {
 	repo := newRepository(store)
 	m := &managerImpl{
-		repo:               repo,
-		permissionsManager: permissionsManager,
-		resourcesManager:   resourceManager,
-		routersManager:     routersManager,
+		repo:           repo,
+		networkManager: networkManager,
 	}
+
+	networkManager.OnNetworkDelete().BindFunc(func(e *networks.NetworkEvent) error {
+		if err := m.DeleteResourcesInNetwork(e.Context, e.Tx, e.Network); err != nil {
+			return fmt.Errorf("failed to delete resources in network: %w", err)
+		}
+
+		return e.Next()
+	})
+
 	// api := newHandler(m, permissionsManager)
 	// api.RegisterEndpoints(router)
 	return m
 }
 
-func (m *managerImpl) DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error {
-	ok, err := m.permissionsManager.ValidateUserPermissions(ctx, accountID, userID, modules.Networks, operations.Read)
-	if err != nil {
-		return errors.NewPermissionValidationError(err)
-	}
-	if !ok {
-		return errors.NewPermissionDeniedError()
-	}
+func (m *managerImpl) GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, network *networks.Network) ([]*resources.NetworkResource, error) {
+	return m.repo.GetResourcesByNetworkID(tx, lockingStrength, network.ID)
+}
 
-	resources, err := m.repo.GetResourcesByNetworkID(tx, db.LockingStrengthUpdate, networkID)
+func (m *managerImpl) DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, network *networks.Network) error {
+	resources, err := m.GetNetworkResourcesByNetID(ctx, tx, db.LockingStrengthUpdate, network)
 	if err != nil {
 		return err
 	}
+
 	for _, resource := range resources {
-		err = m.repo.DeleteResource(tx, resource.ID)
+		err = m.DeleteResource(ctx, tx, resource)
 		if err != nil {
 			return err
 		}
 	}
 
+	return nil
+}
+
+func (m *managerImpl) DeleteResource(ctx context.Context, tx db.Transaction, resource *resources.NetworkResource) error {
+	if err := m.repo.DeleteResource(tx, resource); err != nil {
+		return fmt.Errorf("failed to delete network: %w", err)
+	}
+
+	tx.AddEvent(func() {
+		// addActivityEvent("resource deleted")
+		// noop
+	})
 	return nil
 }
