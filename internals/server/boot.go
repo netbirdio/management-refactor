@@ -1,6 +1,6 @@
 package server
 
-// @note this file includes all the lower level dependencies, db, http and grpc server, metrics, logger, etc.
+// @note this file includes all the lower level dependencies, db, http and grpc BaseServer, metrics, logger, etc.
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 	"github.com/netbirdio/management-refactor/internals/shared/metrics"
 )
 
-func (s *server) Store() *db.Store {
+func (s *BaseServer) Store() *db.Store {
 	return Create(s, func() *db.Store {
 		ctx := context.Background()
 		dbConn, err := db.NewDatabaseConn(ctx)
@@ -27,7 +27,7 @@ func (s *server) Store() *db.Store {
 	})
 }
 
-func (s *server) HttpServer() *http.Server {
+func (s *BaseServer) HttpServer() *http.Server {
 	return Create(s, func() *http.Server {
 		router := s.Router()
 
@@ -38,7 +38,7 @@ func (s *server) HttpServer() *http.Server {
 	})
 }
 
-func (s *server) Metrics() *metrics.AppMetrics {
+func (s *BaseServer) Metrics() *metrics.AppMetrics {
 	return Create(s, func() *metrics.AppMetrics {
 		appMetrics, err := metrics.NewAppMetrics()
 		if err != nil {
@@ -48,13 +48,13 @@ func (s *server) Metrics() *metrics.AppMetrics {
 	})
 }
 
-func (s *server) Router() *mux.Router {
+func (s *BaseServer) Router() *mux.Router {
 	return Create(s, func() *mux.Router {
 		return rest.NewRouter()
 	})
 }
 
-func (s *server) EventStore() activity.Store {
+func (s *BaseServer) EventStore() activity.Store {
 	return Create(s, func() activity.Store {
 		ctx := context.Background()
 		store, err := sqlite.NewSQLiteStore(ctx, "dataDir", "encryptionKey")

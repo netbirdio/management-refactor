@@ -2,7 +2,7 @@ package server
 
 import "fmt"
 
-// Create a dependency and add it to the server's container. A string key identifier will be based on its type definition.
+// Create a dependency and add it to the BaseServer's container. A string key identifier will be based on its type definition.
 func Create[T any](s Server, createFunc func() T) T {
 	result, _ := maybeCreate(s, createFunc)
 
@@ -17,7 +17,7 @@ func CreateNamed[T any](s Server, name string, createFunc func() T) T {
 	return result
 }
 
-// Inject lets you override a specific service from outside the server itself.
+// Inject lets you override a specific service from outside the BaseServer itself.
 // This is useful for tests
 func Inject[T any](c Server, thing T) {
 	_, _ = maybeCreate(c, func() T {

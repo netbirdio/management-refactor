@@ -86,7 +86,7 @@ type Relay struct {
 	Secret         string
 }
 
-// HttpServerConfig is a config of the HTTP Management service server
+// HttpServerConfig is a config of the HTTP Management service BaseServer
 type HttpServerConfig struct {
 	LetsEncryptDomain string
 	// CertFile is the location of the certificate
@@ -173,13 +173,13 @@ type ReverseProxy struct {
 	TrustedHTTPProxies []netip.Prefix
 
 	// TrustedHTTPProxiesCount specifies the count of trusted HTTP proxies between the internet
-	// and the server. When using the trusted proxy count method to extract the real IP address,
+	// and the BaseServer. When using the trusted proxy count method to extract the real IP address,
 	// the middleware will search the X-Forwarded-For IP list from the rightmost by this count
 	// minus one.
 	TrustedHTTPProxiesCount uint
 
 	// TrustedPeers represents a list of trusted peers by their IP prefixes.
-	// These peers are considered trustworthy by the gRPC server operator,
+	// These peers are considered trustworthy by the gRPC BaseServer operator,
 	// and the middleware will attempt to extract the real IP address from
 	// request headers if the peer's address falls within one of these
 	// trusted IP prefixes.
