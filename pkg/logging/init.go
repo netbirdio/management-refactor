@@ -3,7 +3,7 @@ package logging
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/syslog"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -13,10 +13,13 @@ import (
 	"sync"
 
 	"github.com/sirupsen/logrus"
+	lSyslog "github.com/sirupsen/logrus/hooks/syslog"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc/grpclog"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+const defaultLogSize = 5
 
 // global map of package paths to *logrus.Logger
 var (
@@ -162,7 +165,7 @@ func InitLog(logLevel string, logPath string) error {
 		}
 		logrus.SetOutput(io.Writer(lumberjackLogger))
 	} else if logPath == "syslog" {
-		AddSyslogHook()
+		addSyslogHook()
 	}
 
 	//nolint:gocritic
@@ -209,4 +212,13 @@ func getLogMaxSize() int {
 		return int(size)
 	}
 	return defaultLogSize
+}
+
+func addSyslogHook() {
+	hook, err := lSyslog.NewSyslogHook("", "", syslog.LOG_INFO, "")
+
+	if err != nil {
+		logrus.Errorf("Failed creating syslog hook: %s", err)
+	}
+	logrus.AddHook(hook)
 }

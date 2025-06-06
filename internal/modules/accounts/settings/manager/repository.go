@@ -1,4 +1,4 @@
-package settings
+package manager
 
 import (
 	"management/internal/modules/accounts/settings/types"

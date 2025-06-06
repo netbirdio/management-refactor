@@ -8,6 +8,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/idp"
 	"github.com/netbirdio/netbird/management/server/integration_reference"
 
+	"management/internal/modules/accounts/settings"
 	"management/internal/modules/users/pats/types"
 )
 
@@ -129,7 +130,7 @@ func (u *User) IsRegularUser() bool {
 }
 
 // ToUserInfo converts a User object to a UserInfo object.
-func (u *User) ToUserInfo(userData *idp.UserData, settings *Settings) (*UserInfo, error) {
+func (u *User) ToUserInfo(userData *idp.UserData, settings *settings.Settings) (*UserInfo, error) {
 	autoGroups := u.AutoGroups
 	if autoGroups == nil {
 		autoGroups = []string{}

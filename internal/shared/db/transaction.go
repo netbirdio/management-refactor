@@ -1,6 +1,8 @@
 package db
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 type LockingStrength string
 
@@ -15,16 +17,52 @@ const (
 type Transaction interface {
 	Commit() error
 	Rollback() error
+	AddEvent(event func())
+	FlushEvents()
+}
+
+type TransactionalManager[T any] interface {
+	UsingTx(tx Transaction) T
 }
 
 type storeTx struct {
-	db *gorm.DB
+	db     *gorm.DB
+	events []func()
 }
 
-func (t *storeTx) Commit() error {
-	return t.db.Commit().Error
+func (tx *storeTx) Commit() error {
+	for _, e := range tx.events {
+		e()
+	}
+	return tx.db.Commit().Error
 }
 
-func (t *storeTx) Rollback() error {
-	return t.db.Rollback().Error
+func (tx *storeTx) Rollback() error {
+	return tx.db.Rollback().Error
+}
+
+func (tx *storeTx) AddEvent(fn func()) {
+	tx.events = append(tx.events, fn)
+}
+
+func (tx *storeTx) FlushEvents() {
+	for _, e := range tx.events {
+		e()
+	}
+	tx.events = nil
+}
+
+func WithTx(store *Store, parentTx Transaction, fn func(tx Transaction) error) error {
+	if parentTx != nil {
+		return fn(parentTx)
+	}
+
+	return store.RunInTx(func(tx Transaction) error {
+		if err := fn(tx); err != nil {
+			return err
+		}
+
+		tx.FlushEvents()
+		return nil
+	})
 }
