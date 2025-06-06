@@ -8,17 +8,14 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"management/internal/controllers/network_map"
-	"management/internal/modules/peers"
 	"management/internal/shared/activity"
 	"management/internal/shared/activity/sqlite"
 	"management/internal/shared/api/rest"
 	"management/internal/shared/db"
 	"management/internal/shared/metrics"
-	"management/internal/shared/permissions"
 )
 
-func (s *Server) Store() *db.Store {
+func (s *server) Store() *db.Store {
 	return Create(s, func() *db.Store {
 		ctx := context.Background()
 		dbConn, err := db.NewDatabaseConn(ctx)
@@ -30,7 +27,7 @@ func (s *Server) Store() *db.Store {
 	})
 }
 
-func (s *Server) HttpServer() *http.Server {
+func (s *server) HttpServer() *http.Server {
 	return Create(s, func() *http.Server {
 		router := s.Router()
 
@@ -41,7 +38,7 @@ func (s *Server) HttpServer() *http.Server {
 	})
 }
 
-func (s *Server) Metrics() *metrics.AppMetrics {
+func (s *server) Metrics() *metrics.AppMetrics {
 	return Create(s, func() *metrics.AppMetrics {
 		appMetrics, err := metrics.NewAppMetrics()
 		if err != nil {
@@ -51,13 +48,13 @@ func (s *Server) Metrics() *metrics.AppMetrics {
 	})
 }
 
-func (s *Server) Router() *mux.Router {
+func (s *server) Router() *mux.Router {
 	return Create(s, func() *mux.Router {
 		return rest.NewRouter()
 	})
 }
 
-func (s *Server) EventStore() activity.Store {
+func (s *server) EventStore() activity.Store {
 	return Create(s, func() activity.Store {
 		ctx := context.Background()
 		store, err := sqlite.NewSQLiteStore(ctx, "dataDir", "encryptionKey")
@@ -65,29 +62,5 @@ func (s *Server) EventStore() activity.Store {
 			log.Fatalf("error while creating event store: %s", err)
 		}
 		return store
-	})
-}
-
-func (s *Server) NetworkMapController() *network_map.Controller {
-	return Create(s, func() *network_map.Controller {
-		store := s.Store()
-		metrics := s.Metrics()
-		return network_map.NewController(store, metrics)
-	})
-}
-
-func (s *Server) PermissionsManager() permissions.Manager {
-	return Create(s, func() permissions.Manager {
-		return permissions.NewManager()
-	})
-}
-
-func (s *Server) PeersManager() *peers.Manager {
-	return Create(s, func() *peers.Manager {
-		store := s.Store()
-		router := s.Router()
-		permissionsManager := s.PermissionsManager()
-
-		return peers.NewManager(store, router, permissionsManager)
 	})
 }

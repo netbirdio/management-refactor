@@ -7,9 +7,16 @@ import (
 	"management/pkg/logging"
 )
 
+type Server interface {
+	Start() error
+	Stop() error
+	GetContainer(key string) (any, bool)
+	SetContainer(key string, container any)
+}
+
 // Server holds the HTTP server instance.
 // Add any additional fields you need, such as database connections, config, etc.
-type Server struct {
+type server struct {
 	// container of dependencies, each dependency is identified by a unique string.
 	container map[string]any
 }
@@ -17,15 +24,15 @@ type Server struct {
 var log = logging.LoggerForThisPackage()
 
 // NewServer initializes and configures a new Server instance
-func NewServer() *Server {
-	return &Server{
+func NewServer() Server {
+	return &server{
 		// @todo shared config
 		container: make(map[string]any),
 	}
 }
 
 // Start begins listening for HTTP requests on the configured address
-func (s *Server) Start() error {
+func (s *server) Start() error {
 	// @todo instead of specifically starting httpserver
 	// have a supervised start/stop of dependencies instead.
 	// e.g. http, grpc, metrics, crons, etc
@@ -33,9 +40,25 @@ func (s *Server) Start() error {
 }
 
 // Stop attempts a graceful shutdown, waiting up to 5 seconds for active connections to finish
-func (s *Server) Stop() error {
+func (s *server) Stop() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	return s.HttpServer().Shutdown(ctx)
+}
+
+// GetContainer retrieves a dependency from the server's container by its key
+func (s *server) GetContainer(key string) (any, bool) {
+	container, exists := s.container[key]
+	return container, exists
+}
+
+// SetContainer stores a dependency in the server's container with the specified key
+func (s *server) SetContainer(key string, container any) {
+	if _, exists := s.container[key]; exists {
+		log.Errorf("container with key %s already exists", key)
+		return
+	}
+	s.container[key] = container
+	log.Infof("container with key %s set successfully", key)
 }

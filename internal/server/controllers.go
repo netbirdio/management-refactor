@@ -1,0 +1,11 @@
+package server
+
+import "management/internal/controllers/network_map"
+
+func (s *server) NetworkMapController() *network_map.Controller {
+	return Create(s, func() *network_map.Controller {
+		store := s.Store()
+		metrics := s.Metrics()
+		return network_map.NewController(store, metrics)
+	})
+}
