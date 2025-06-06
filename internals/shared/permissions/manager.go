@@ -4,7 +4,10 @@ package permissions
 
 import (
 	"context"
+	"net/http"
 
+	nbcontext "github.com/netbirdio/netbird/management/server/context"
+	"github.com/netbirdio/netbird/management/server/http/util"
 	"github.com/netbirdio/netbird/management/server/status"
 
 	"github.com/netbirdio/management-refactor/internals/modules/users/types"
@@ -104,4 +107,45 @@ func (m *managerImpl) ValidateAccountAccess(ctx context.Context, accountID strin
 		return status.NewUserNotPartOfAccountError()
 	}
 	return nil
+}
+
+type UserAuthExtractor func(ctx context.Context) (*nbcontext.UserAuth, error)
+
+type PermissionValidator interface {
+	ValidateUserPermissions(ctx context.Context, accountID, userID string, module modules.Module, operation operations.Operation) (bool, error)
+}
+
+// WithPermission wraps an HTTP handler with permission checking logic.
+func WithPermission(
+	module modules.Module,
+	operation operations.Operation,
+	authExtractor UserAuthExtractor,
+	validator PermissionValidator,
+	handlerFunc func(w http.ResponseWriter, r *http.Request, auth *nbcontext.UserAuth),
+) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+
+		userAuth, err := authExtractor(ctx)
+		if err != nil {
+			log.WithContext(ctx).Errorf("failed to get user auth from context: %v", err)
+			util.WriteError(ctx, err, w)
+			return
+		}
+
+		allowed, err := validator.ValidateUserPermissions(ctx, userAuth.AccountId, userAuth.UserId, module, operation)
+		if err != nil {
+			log.WithContext(ctx).Errorf("failed to validate permissions for user %s on account %s: %v", userAuth.UserId, userAuth.AccountId, err)
+			util.WriteError(ctx, status.NewPermissionValidationError(err), w)
+			return
+		}
+
+		if !allowed {
+			log.WithContext(ctx).Tracef("user %s on account %s is not allowed to %s in %s", userAuth.UserId, userAuth.AccountId, operation, module)
+			util.WriteError(ctx, status.NewPermissionDeniedError(), w)
+			return
+		}
+
+		handlerFunc(w, r, userAuth)
+	}
 }
