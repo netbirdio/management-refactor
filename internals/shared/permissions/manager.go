@@ -7,13 +7,13 @@ import (
 
 	"github.com/netbirdio/netbird/management/server/status"
 
-	"management/internal/modules/users/types"
-	"management/internal/shared/activity"
-	"management/internal/shared/db"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
-	"management/internal/shared/permissions/roles"
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/shared/activity"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage()

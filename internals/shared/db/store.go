@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage()

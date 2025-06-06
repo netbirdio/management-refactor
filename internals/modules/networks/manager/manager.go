@@ -7,10 +7,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 
-	"management/internal/modules/networks"
-	"management/internal/shared/db"
-	"management/internal/shared/hook"
-	"management/internal/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/hook"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 type managerImpl struct {

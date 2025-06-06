@@ -6,7 +6,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/idp"
 	"github.com/netbirdio/netbird/util"
 
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type (

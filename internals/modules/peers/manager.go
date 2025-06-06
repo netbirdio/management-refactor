@@ -5,11 +5,11 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"management/internal/modules/peers/types"
-	"management/internal/shared/activity"
-	"management/internal/shared/db"
-	"management/internal/shared/permissions"
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/internals/modules/peers/types"
+	"github.com/netbirdio/management-refactor/internals/shared/activity"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage()

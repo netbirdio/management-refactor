@@ -8,11 +8,11 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"management/internal/shared/activity"
-	"management/internal/shared/activity/sqlite"
-	"management/internal/shared/api/rest"
-	"management/internal/shared/db"
-	"management/internal/shared/metrics"
+	"github.com/netbirdio/management-refactor/internals/shared/activity"
+	"github.com/netbirdio/management-refactor/internals/shared/activity/sqlite"
+	"github.com/netbirdio/management-refactor/internals/shared/api/rest"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/metrics"
 )
 
 func (s *server) Store() *db.Store {

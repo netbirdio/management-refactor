@@ -2,8 +2,8 @@ package networks
 
 import (
 	"context"
-	"management/internal/shared/db"
-	"management/internal/shared/hook"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/hook"
 )
 
 type NetworkEvent struct {

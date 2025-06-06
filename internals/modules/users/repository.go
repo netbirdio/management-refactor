@@ -1,8 +1,8 @@
 package users
 
 import (
-	"management/internal/modules/users/types"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {

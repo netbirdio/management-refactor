@@ -10,8 +10,8 @@ import (
 	"github.com/netbirdio/netbird/management/server/http/api"
 	"github.com/netbirdio/netbird/management/server/http/util"
 
-	"management/internal/shared/db"
-	"management/internal/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 type handler struct {

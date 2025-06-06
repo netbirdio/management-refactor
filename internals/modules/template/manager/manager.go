@@ -6,10 +6,10 @@ package manager
 import (
 	"github.com/gorilla/mux"
 
-	"management/internal/modules/template"
-	"management/internal/shared/db"
-	appmetrics "management/internal/shared/metrics"
-	"management/internal/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/modules/template"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	appmetrics "github.com/netbirdio/management-refactor/internals/shared/metrics"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 type managerImpl struct {

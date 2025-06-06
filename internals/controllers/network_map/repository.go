@@ -5,13 +5,13 @@ import (
 
 	nbpeer "github.com/netbirdio/netbird/management/server/peer"
 
-	"management/internal/modules/accounts"
-	"management/internal/modules/groups"
-	"management/internal/modules/networks"
-	"management/internal/modules/networks/resources"
-	"management/internal/modules/networks/routers"
-	"management/internal/modules/policies"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/accounts"
+	"github.com/netbirdio/management-refactor/internals/modules/groups"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/routers"
+	"github.com/netbirdio/management-refactor/internals/modules/policies"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type NetworkMapData struct {

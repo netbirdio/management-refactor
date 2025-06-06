@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"management/pkg/configuration"
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/pkg/configuration"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage()

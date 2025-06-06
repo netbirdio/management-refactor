@@ -1,6 +1,6 @@
 package manager
 
-import "management/internal/shared/db"
+import "github.com/netbirdio/management-refactor/internals/shared/db"
 
 type Repository interface {
 	RunInTx(fn func(tx db.Transaction) error) error

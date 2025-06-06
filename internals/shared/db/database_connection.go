@@ -11,8 +11,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"management/internal/shared/errors"
-	"management/pkg/configuration"
+	"github.com/netbirdio/management-refactor/internals/shared/errors"
+	"github.com/netbirdio/management-refactor/pkg/configuration"
 )
 
 const (

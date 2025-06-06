@@ -1,8 +1,8 @@
 package manager
 
 import (
-	"management/internal/modules/networks"
-	"management/internal/shared/hook"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/shared/hook"
 )
 
 func (m *managerImpl) OnNetworkDelete() *hook.Hook[*networks.NetworkEvent] {

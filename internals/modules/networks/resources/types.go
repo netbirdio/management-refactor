@@ -11,8 +11,8 @@ import (
 	"github.com/netbirdio/netbird/route"
 	"github.com/rs/xid"
 
-	"management/internal/modules/networks"
-	"management/internal/modules/networks/routers"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/routers"
 )
 
 type NetworkResourceType string

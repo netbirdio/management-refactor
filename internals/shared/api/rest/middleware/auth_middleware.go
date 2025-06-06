@@ -17,7 +17,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/http/util"
 	"github.com/netbirdio/netbird/management/server/status"
 
-	"management/pkg/logging/hook"
+	"github.com/netbirdio/management-refactor/pkg/logging/hook"
 )
 
 type EnsureAccountFunc func(ctx context.Context, userAuth nbcontext.UserAuth) (string, string, error)

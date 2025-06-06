@@ -1,8 +1,8 @@
 package peers
 
 import (
-	"management/internal/modules/peers/types"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/peers/types"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {

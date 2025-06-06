@@ -5,8 +5,8 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"management/internal/shared/db"
-	appmetrics "management/internal/shared/metrics"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	appmetrics "github.com/netbirdio/management-refactor/internals/shared/metrics"
 )
 
 type Controller struct {

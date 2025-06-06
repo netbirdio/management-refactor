@@ -3,7 +3,7 @@ package rest
 import (
 	"github.com/gorilla/mux"
 
-	"management/internal/shared/api/rest/middleware"
+	"github.com/netbirdio/management-refactor/internals/shared/api/rest/middleware"
 )
 
 // NewRouter creates and returns a mux.Router configured with default middleware

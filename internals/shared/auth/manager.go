@@ -13,11 +13,11 @@ import (
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/store"
 
-	"management/internal/modules/accounts/settings"
-	"management/internal/modules/users"
-	pattypes "management/internal/modules/users/pats/types"
-	"management/internal/modules/users/types"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
+	"github.com/netbirdio/management-refactor/internals/modules/users"
+	pattypes "github.com/netbirdio/management-refactor/internals/modules/users/pats/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 var _ Manager = (*manager)(nil)

@@ -1,8 +1,8 @@
 package manager
 
 import (
-	"management/internal/modules/accounts/settings/types"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings/types"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {

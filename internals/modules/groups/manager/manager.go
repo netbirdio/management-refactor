@@ -9,8 +9,8 @@ import (
 	"github.com/netbirdio/netbird/management/server/store"
 	"github.com/netbirdio/netbird/management/server/types"
 
-	"management/internal/shared/db"
-	"management/internal/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 type Manager struct {

@@ -12,7 +12,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	log "github.com/sirupsen/logrus"
 
-	"management/internal/shared/activity"
+	"github.com/netbirdio/management-refactor/internals/shared/activity"
 )
 
 const (

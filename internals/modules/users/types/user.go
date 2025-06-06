@@ -8,8 +8,8 @@ import (
 	"github.com/netbirdio/netbird/management/server/idp"
 	"github.com/netbirdio/netbird/management/server/integration_reference"
 
-	"management/internal/modules/accounts/settings"
-	"management/internal/modules/users/pats/types"
+	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
+	"github.com/netbirdio/management-refactor/internals/modules/users/pats/types"
 )
 
 const (

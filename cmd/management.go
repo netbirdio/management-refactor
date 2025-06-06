@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"management/internal/server"
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/internals/server"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage()

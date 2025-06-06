@@ -1,12 +1,12 @@
 package server
 
 import (
-	"management/internal/modules/networks"
-	"management/internal/modules/networks/manager"
-	"management/internal/modules/networks/resources"
-	resourcesManager "management/internal/modules/networks/resources/manager"
-	"management/internal/modules/peers"
-	"management/internal/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/manager"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
+	resourcesManager "github.com/netbirdio/management-refactor/internals/modules/networks/resources/manager"
+	"github.com/netbirdio/management-refactor/internals/modules/peers"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 func (s *server) NetworksManager() networks.Manager {

@@ -8,11 +8,11 @@ import (
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/http/util"
 
-	"management/internal/shared/db"
-	"management/internal/shared/errors"
-	"management/internal/shared/permissions"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/errors"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 type handler struct {

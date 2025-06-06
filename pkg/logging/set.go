@@ -3,10 +3,10 @@ package logging
 import (
 	"github.com/sirupsen/logrus"
 
-	"management/pkg/logging/hook"
-	"management/pkg/logging/logcat"
-	"management/pkg/logging/syslog"
-	"management/pkg/logging/txt"
+	"github.com/netbirdio/management-refactor/pkg/logging/hook"
+	"github.com/netbirdio/management-refactor/pkg/logging/logcat"
+	"github.com/netbirdio/management-refactor/pkg/logging/syslog"
+	"github.com/netbirdio/management-refactor/pkg/logging/txt"
 )
 
 // SetTextFormatter set the text formatter for given logger.

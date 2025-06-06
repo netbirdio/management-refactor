@@ -1,6 +1,6 @@
 package manager
 
-import "management/pkg/logging"
+import "github.com/netbirdio/management-refactor/pkg/logging"
 
 var log = logging.LoggerForThisPackage()
 

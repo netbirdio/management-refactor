@@ -1,6 +1,6 @@
 package server
 
-import "management/internal/controllers/network_map"
+import "github.com/netbirdio/management-refactor/internals/controllers/network_map"
 
 func (s *server) NetworkMapController() *network_map.Controller {
 	return Create(s, func() *network_map.Controller {

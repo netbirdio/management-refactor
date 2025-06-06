@@ -3,7 +3,7 @@ package roles
 import (
 	"github.com/netbirdio/netbird/management/server/types"
 
-	"management/internal/shared/permissions/operations"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 var User = RolePermissions{

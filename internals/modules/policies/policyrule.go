@@ -3,7 +3,7 @@ package policies
 import (
 	"github.com/netbirdio/netbird/management/proto"
 
-	"management/internal/modules/groups"
+	"github.com/netbirdio/management-refactor/internals/modules/groups"
 )
 
 // PolicyUpdateOperationType operation type

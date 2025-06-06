@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"management/pkg/logging"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 type Server interface {

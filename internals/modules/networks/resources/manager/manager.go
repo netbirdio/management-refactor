@@ -6,9 +6,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"management/internal/modules/networks"
-	"management/internal/modules/networks/resources"
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type managerImpl struct {

@@ -1,9 +1,9 @@
 package roles
 
 import (
-	"management/internal/modules/users/types"
-	"management/internal/shared/permissions/modules"
-	"management/internal/shared/permissions/operations"
+	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 type RolePermissions struct {

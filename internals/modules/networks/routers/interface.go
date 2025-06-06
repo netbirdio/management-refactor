@@ -3,7 +3,7 @@ package routers
 import (
 	"context"
 
-	"management/internal/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Manager interface {

@@ -6,7 +6,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/http/api"
 	"github.com/rs/xid"
 
-	"management/internal/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks"
 )
 
 type NetworkRouter struct {
