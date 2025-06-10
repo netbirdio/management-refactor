@@ -1,2 +1,0 @@
-log_levels:
-  management-refactor/internal/shared/db: debug

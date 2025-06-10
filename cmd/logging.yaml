@@ -1,6 +1,0 @@
-log_levels:
-  default: debug
-  github.com/netbirdio/management-refactor/internals/shared/activity: error
-  github.com/netbirdio/management-refactor/internals/shared/db: debug
-  github.com/netbirdio/management-refactor/internals/shared/permissions: debug
-  github.com/netbirdio/management-refactor/internals/modules/peers/manager: warn

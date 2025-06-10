@@ -27,6 +27,8 @@ var (
 	loggers = map[string]*logrus.Logger{}
 )
 
+const basePrefix = "github.com/netbirdio/"
+
 // Init reads the logging config from a YAML file and sets up per-package loggers.
 func Init(configFilePath string) error {
 	v := viper.New()
@@ -120,6 +122,10 @@ func LoggerForThisPackage() *logrus.Logger {
 
 	fullFuncName := fn.Name()
 	pkgPath := parsePackageFromFuncName(fullFuncName)
+
+	if strings.HasPrefix(pkgPath, basePrefix) {
+		pkgPath = strings.TrimPrefix(pkgPath, basePrefix)
+	}
 
 	return LoggerFor(pkgPath)
 }

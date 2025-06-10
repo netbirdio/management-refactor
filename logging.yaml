@@ -1,0 +1,7 @@
+log_levels:
+  default: trace
+  management-refactor/internals/shared/activity: error
+  management-refactor/internals/shared/db: debug
+  management-refactor/internals/shared/permissions: debug
+  management-refactor/internals/modules/peers/manager: warn
+  management-cloud-refactor/integrations: warn
