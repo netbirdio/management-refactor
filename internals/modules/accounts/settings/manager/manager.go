@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/gorilla/mux"
-	"github.com/netbirdio/netbird/management/server/integrations/extra_settings"
-	types2 "github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/management/server/integrations/extra_settings"
+	types2 "github.com/netbirdio/management-refactor/management/server/types"
 
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"

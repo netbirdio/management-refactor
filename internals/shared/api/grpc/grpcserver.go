@@ -20,18 +20,18 @@ import (
 
 	integrationsConfig "github.com/netbirdio/management-integrations/integrations/config"
 
-	"github.com/netbirdio/netbird/encryption"
-	"github.com/netbirdio/netbird/management/proto"
-	"github.com/netbirdio/netbird/management/server/account"
-	"github.com/netbirdio/netbird/management/server/activity"
-	"github.com/netbirdio/netbird/management/server/auth"
-	nbContext "github.com/netbirdio/netbird/management/server/context"
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
-	"github.com/netbirdio/netbird/management/server/posture"
-	"github.com/netbirdio/netbird/management/server/settings"
-	internalStatus "github.com/netbirdio/netbird/management/server/status"
-	"github.com/netbirdio/netbird/management/server/telemetry"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/encryption"
+	"github.com/netbirdio/management-refactor/management/proto"
+	"github.com/netbirdio/management-refactor/management/server/account"
+	"github.com/netbirdio/management-refactor/management/server/activity"
+	"github.com/netbirdio/management-refactor/management/server/auth"
+	nbContext "github.com/netbirdio/management-refactor/management/server/context"
+	nbpeer "github.com/netbirdio/management-refactor/management/server/peer"
+	"github.com/netbirdio/management-refactor/management/server/posture"
+	"github.com/netbirdio/management-refactor/management/server/settings"
+	internalStatus "github.com/netbirdio/management-refactor/management/server/status"
+	"github.com/netbirdio/management-refactor/management/server/telemetry"
+	"github.com/netbirdio/management-refactor/management/server/types"
 )
 
 // GRPCServer an instance of a Management gRPC API server

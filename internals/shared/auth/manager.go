@@ -8,11 +8,11 @@ import (
 	"hash/crc32"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/netbirdio/netbird/base62"
-	nbjwt "github.com/netbirdio/netbird/management/server/auth/jwt"
-	nbcontext "github.com/netbirdio/netbird/management/server/context"
-	"github.com/netbirdio/netbird/management/server/store"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/base62"
+	nbjwt "github.com/netbirdio/management-refactor/management/server/auth/jwt"
+	nbcontext "github.com/netbirdio/management-refactor/management/server/context"
+	"github.com/netbirdio/management-refactor/management/server/store"
+	"github.com/netbirdio/management-refactor/management/server/types"
 
 	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
 	"github.com/netbirdio/management-refactor/internals/modules/users"

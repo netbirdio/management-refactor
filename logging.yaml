@@ -4,4 +4,4 @@ log_levels:
   management-refactor/internals/shared/db: debug
   management-refactor/internals/shared/permissions: debug
   management-refactor/internals/modules/peers/manager: warn
-  management-cloud-refactor/integrations: warn
+  management-integrations-refactor/integrations: info

@@ -5,14 +5,18 @@
 package permissions
 
 import (
-	context "context"
-	reflect "reflect"
+	"context"
+	"net/http"
+	"reflect"
 
-	gomock "github.com/golang/mock/gomock"
-	modules "github.com/netbirdio/netbird/management/server/permissions/modules"
-	operations "github.com/netbirdio/netbird/management/server/permissions/operations"
-	roles "github.com/netbirdio/netbird/management/server/permissions/roles"
-	types "github.com/netbirdio/netbird/management/server/types"
+	"github.com/golang/mock/gomock"
+	context0 "github.com/netbirdio/netbird/management/server/context"
+
+	"github.com/netbirdio/management-refactor/internals/modules/users"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
 )
 
 // MockManager is a mock of Manager interface.
@@ -38,8 +42,20 @@ func (m *MockManager) EXPECT() *MockManagerMockRecorder {
 	return m.recorder
 }
 
+// Init mocks base method.
+func (m *MockManager) Init(userManager userManager) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Init", userManager)
+}
+
+// Init indicates an expected call of Init.
+func (mr *MockManagerMockRecorder) Init(userManager interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockManager)(nil).Init), userManager)
+}
+
 // ValidateAccountAccess mocks base method.
-func (m *MockManager) ValidateAccountAccess(ctx context.Context, accountID string, user *types.User, allowOwnerAndAdmin bool) error {
+func (m *MockManager) ValidateAccountAccess(ctx context.Context, accountID string, user *users.User, allowOwnerAndAdmin bool) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ValidateAccountAccess", ctx, accountID, user, allowOwnerAndAdmin)
 	ret0, _ := ret[0].(error)
@@ -79,4 +95,94 @@ func (m *MockManager) ValidateUserPermissions(ctx context.Context, accountID, us
 func (mr *MockManagerMockRecorder) ValidateUserPermissions(ctx, accountID, userID, module, operation interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateUserPermissions", reflect.TypeOf((*MockManager)(nil).ValidateUserPermissions), ctx, accountID, userID, module, operation)
+}
+
+// WithPermission mocks base method.
+func (m *MockManager) WithPermission(module modules.Module, operation operations.Operation, handlerFunc func(http.ResponseWriter, *http.Request, *context0.UserAuth)) http.HandlerFunc {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WithPermission", module, operation, handlerFunc)
+	ret0, _ := ret[0].(http.HandlerFunc)
+	return ret0
+}
+
+// WithPermission indicates an expected call of WithPermission.
+func (mr *MockManagerMockRecorder) WithPermission(module, operation, handlerFunc interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithPermission", reflect.TypeOf((*MockManager)(nil).WithPermission), module, operation, handlerFunc)
+}
+
+// MockuserManager is a mock of userManager interface.
+type MockuserManager struct {
+	ctrl     *gomock.Controller
+	recorder *MockuserManagerMockRecorder
+}
+
+// MockuserManagerMockRecorder is the mock recorder for MockuserManager.
+type MockuserManagerMockRecorder struct {
+	mock *MockuserManager
+}
+
+// NewMockuserManager creates a new mock instance.
+func NewMockuserManager(ctrl *gomock.Controller) *MockuserManager {
+	mock := &MockuserManager{ctrl: ctrl}
+	mock.recorder = &MockuserManagerMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockuserManager) EXPECT() *MockuserManagerMockRecorder {
+	return m.recorder
+}
+
+// GetUserByID mocks base method.
+func (m *MockuserManager) GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByID", ctx, tx, strength, id)
+	ret0, _ := ret[0].(*users.User)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetUserByID indicates an expected call of GetUserByID.
+func (mr *MockuserManagerMockRecorder) GetUserByID(ctx, tx, strength, id interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockuserManager)(nil).GetUserByID), ctx, tx, strength, id)
+}
+
+// MockPermissionValidator is a mock of PermissionValidator interface.
+type MockPermissionValidator struct {
+	ctrl     *gomock.Controller
+	recorder *MockPermissionValidatorMockRecorder
+}
+
+// MockPermissionValidatorMockRecorder is the mock recorder for MockPermissionValidator.
+type MockPermissionValidatorMockRecorder struct {
+	mock *MockPermissionValidator
+}
+
+// NewMockPermissionValidator creates a new mock instance.
+func NewMockPermissionValidator(ctrl *gomock.Controller) *MockPermissionValidator {
+	mock := &MockPermissionValidator{ctrl: ctrl}
+	mock.recorder = &MockPermissionValidatorMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockPermissionValidator) EXPECT() *MockPermissionValidatorMockRecorder {
+	return m.recorder
+}
+
+// ValidateUserPermissions mocks base method.
+func (m *MockPermissionValidator) ValidateUserPermissions(ctx context.Context, accountID, userID string, module modules.Module, operation operations.Operation) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateUserPermissions", ctx, accountID, userID, module, operation)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ValidateUserPermissions indicates an expected call of ValidateUserPermissions.
+func (mr *MockPermissionValidatorMockRecorder) ValidateUserPermissions(ctx, accountID, userID, module, operation interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateUserPermissions", reflect.TypeOf((*MockPermissionValidator)(nil).ValidateUserPermissions), ctx, accountID, userID, module, operation)
 }

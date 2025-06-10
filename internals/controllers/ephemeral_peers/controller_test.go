@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	nbAccount "github.com/netbirdio/netbird/management/server/account"
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
-	"github.com/netbirdio/netbird/management/server/store"
-	"github.com/netbirdio/netbird/management/server/types"
+	nbAccount "github.com/netbirdio/management-refactor/management/server/account"
+	nbpeer "github.com/netbirdio/management-refactor/management/server/peer"
+	"github.com/netbirdio/management-refactor/management/server/store"
+	"github.com/netbirdio/management-refactor/management/server/types"
 )
 
 type MockStore struct {

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/netbirdio/netbird/management/proto"
+	"github.com/netbirdio/management-refactor/management/proto"
 )
 
 // var peersUpdater *UpdateChannel

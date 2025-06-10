@@ -16,11 +16,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/netbirdio/netbird/management/server/auth"
-	nbjwt "github.com/netbirdio/netbird/management/server/auth/jwt"
-	nbcontext "github.com/netbirdio/netbird/management/server/context"
-	"github.com/netbirdio/netbird/management/server/store"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/management/server/auth"
+	nbjwt "github.com/netbirdio/management-refactor/management/server/auth/jwt"
+	nbcontext "github.com/netbirdio/management-refactor/management/server/context"
+	"github.com/netbirdio/management-refactor/management/server/store"
+	"github.com/netbirdio/management-refactor/management/server/types"
 )
 
 func TestAuthManager_GetAccountInfoFromPAT(t *testing.T) {
@@ -231,7 +231,7 @@ func TestAuthManager_ValidateAndParseToken(t *testing.T) {
 		return fmt.Sprintf("%s/%s", audience, name)
 	}
 
-	lastLogin := time.Date(2025, 2, 12, 14, 25, 26, 0, time.UTC) //"2025-02-12T14:25:26.186Z"
+	lastLogin := time.Date(2025, 2, 12, 14, 25, 26, 0, time.UTC) // "2025-02-12T14:25:26.186Z"
 
 	tests := []struct {
 		name      string

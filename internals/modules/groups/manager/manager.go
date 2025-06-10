@@ -5,9 +5,9 @@ import (
 	"fmt"
 
 	"github.com/gorilla/mux"
-	"github.com/netbirdio/netbird/management/server/http/api"
-	"github.com/netbirdio/netbird/management/server/store"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/management/server/http/api"
+	"github.com/netbirdio/management-refactor/management/server/store"
+	"github.com/netbirdio/management-refactor/management/server/types"
 
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"

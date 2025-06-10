@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	nbcontext "github.com/netbirdio/netbird/management/server/context"
-	"github.com/netbirdio/netbird/management/server/http/util"
+	nbcontext "github.com/netbirdio/management-refactor/management/server/context"
+	"github.com/netbirdio/management-refactor/management/server/http/util"
 
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/errors"

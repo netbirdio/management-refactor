@@ -8,7 +8,7 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
-	"github.com/netbirdio/netbird/management/server/activity"
+	"github.com/netbirdio/management-refactor/management/server/activity"
 
 	"github.com/stretchr/testify/require"
 )

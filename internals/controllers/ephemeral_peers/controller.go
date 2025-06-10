@@ -7,9 +7,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/netbirdio/netbird/management/server/activity"
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
-	"github.com/netbirdio/netbird/management/server/store"
+	"github.com/netbirdio/management-refactor/management/server/activity"
+	nbpeer "github.com/netbirdio/management-refactor/management/server/peer"
+	"github.com/netbirdio/management-refactor/management/server/store"
 
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 )

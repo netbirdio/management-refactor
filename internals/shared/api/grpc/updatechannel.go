@@ -7,9 +7,9 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/netbirdio/netbird/management/proto"
-	"github.com/netbirdio/netbird/management/server/telemetry"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/management/proto"
+	"github.com/netbirdio/management-refactor/management/server/telemetry"
+	"github.com/netbirdio/management-refactor/management/server/types"
 )
 
 const channelBufferSize = 100
