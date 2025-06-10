@@ -15,7 +15,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.2-0.20240212192251-757544f21357
 	github.com/hashicorp/go-secure-stdlib/base62 v0.1.2
 	github.com/mattn/go-sqlite3 v1.14.22
-	github.com/netbirdio/management-integrations-refactor v0.0.0-20250606145650-91ec2ff19a65
+	github.com/netbirdio/management-integrations-refactor/integrations v0.0.0-20250610135639-c2a4c2d5389e
 	github.com/netbirdio/management-integrations/integrations v0.0.0-20250330143713-7901e0a82203
 	github.com/netbirdio/netbird v0.41.0
 	github.com/petermattis/goid v0.0.0-20250319124200-ccd6737f222a
