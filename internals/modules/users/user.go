@@ -1,4 +1,4 @@
-package types
+package users
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/integration_reference"
 
 	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
-	"github.com/netbirdio/management-refactor/internals/modules/users/pats/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users/pats"
 )
 
 const (
@@ -81,9 +81,9 @@ type User struct {
 	// ServiceUserName is only set if IsServiceUser is true
 	ServiceUserName string
 	// AutoGroups is a list of Group IDs to auto-assign to peers registered by this user
-	AutoGroups []string                              `gorm:"serializer:json"`
-	PATs       map[string]*types.PersonalAccessToken `gorm:"-"`
-	PATsG      []types.PersonalAccessToken           `json:"-" gorm:"foreignKey:UserID;references:id;constraint:OnDelete:CASCADE;"`
+	AutoGroups []string                             `gorm:"serializer:json"`
+	PATs       map[string]*pats.PersonalAccessToken `gorm:"-"`
+	PATsG      []pats.PersonalAccessToken           `json:"-" gorm:"foreignKey:UserID;references:id;constraint:OnDelete:CASCADE;"`
 	// Blocked indicates whether the user is blocked. Blocked users can't use the system.
 	Blocked bool
 	// LastLogin is the last time the user logged in to IdP
@@ -191,7 +191,7 @@ func (u *User) ToUserInfo(userData *idp.UserData, settings *settings.Settings) (
 func (u *User) Copy() *User {
 	autoGroups := make([]string, len(u.AutoGroups))
 	copy(autoGroups, u.AutoGroups)
-	pats := make(map[string]*types.PersonalAccessToken, len(u.PATs))
+	pats := make(map[string]*pats.PersonalAccessToken, len(u.PATs))
 	for k, v := range u.PATs {
 		pats[k] = v.Copy()
 	}

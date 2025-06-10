@@ -102,7 +102,7 @@ func LoggerFor(pkgPath string) *logrus.Logger {
 		return l
 	}
 
-	logrus.Printf("No logger configured for %q; using fallback (info-level) logger.\n", pkgPath)
+	logrus.Tracef("No logger configured for %q; using fallback (info-level) logger", pkgPath)
 	fallback := logrus.New()
 	fallback.SetLevel(logrus.InfoLevel)
 	return fallback

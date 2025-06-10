@@ -1,15 +1,15 @@
-package users
+package manager
 
 import (
-	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {
 	RunInTx(fn func(tx db.Transaction) error) error
-	GetAllUsers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]types.User, error)
-	GetUserByID(tx db.Transaction, strength db.LockingStrength, id string) (*types.User, error)
-	CreateUser(tx db.Transaction, u *types.User) error
+	GetAllUsers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]users.User, error)
+	GetUserByID(tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error)
+	CreateUser(tx db.Transaction, u *users.User) error
 }
 
 type repository struct {
@@ -17,7 +17,7 @@ type repository struct {
 }
 
 func newRepository(s *db.Store) Repository {
-	err := s.AutoMigrate(types.User{})
+	err := s.AutoMigrate(users.User{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate: %v", err)
 	}
@@ -28,8 +28,8 @@ func (r *repository) RunInTx(fn func(tx db.Transaction) error) error {
 	return r.store.RunInTx(fn)
 }
 
-func (r *repository) GetAllUsers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]types.User, error) {
-	var users []types.User
+func (r *repository) GetAllUsers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]users.User, error) {
+	var users []users.User
 	err := r.store.GetMany(tx, strength, &users, "account_id = ?", accountID)
 	if err != nil {
 		return nil, err
@@ -37,8 +37,8 @@ func (r *repository) GetAllUsers(tx db.Transaction, strength db.LockingStrength,
 	return users, nil
 }
 
-func (r *repository) GetUserByID(tx db.Transaction, strength db.LockingStrength, id string) (*types.User, error) {
-	var user types.User
+func (r *repository) GetUserByID(tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error) {
+	var user users.User
 	err := r.store.GetOne(tx, strength, &user, "id = ?", id)
 	if err != nil {
 		return nil, err
@@ -46,6 +46,6 @@ func (r *repository) GetUserByID(tx db.Transaction, strength db.LockingStrength,
 	return &user, nil
 }
 
-func (r *repository) CreateUser(tx db.Transaction, u *types.User) error {
+func (r *repository) CreateUser(tx db.Transaction, u *users.User) error {
 	return r.store.Create(tx, u)
 }

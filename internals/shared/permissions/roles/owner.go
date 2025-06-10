@@ -1,12 +1,12 @@
 package roles
 
 import (
-	"github.com/netbirdio/netbird/management/server/permissions/operations"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 var Owner = RolePermissions{
-	Role: types.UserRoleOwner,
+	Role: users.UserRoleOwner,
 	AutoAllowNew: map[operations.Operation]bool{
 		operations.Read:  true,
 		operations.Write: true,

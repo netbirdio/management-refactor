@@ -8,7 +8,6 @@ import (
 	"github.com/netbirdio/netbird/management/server/integrations/extra_settings"
 	types2 "github.com/netbirdio/netbird/management/server/types"
 
-	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings/types"
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/db"

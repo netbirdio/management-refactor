@@ -17,10 +17,10 @@ var log = logging.LoggerForThisPackage()
 var mgmtCmd = &cobra.Command{
 	Use:   "management",
 	Short: "start NetBird Management Server",
-	PreRunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		err := logging.Init("logging.yaml")
 		if err != nil {
-			log.Fatalf("Failed to init logging: %v", err)
+			log.Debugf("Failed to init logging: %v", err)
 		}
 
 		srv := server.NewServer()

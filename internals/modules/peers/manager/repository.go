@@ -1,16 +1,16 @@
-package peers
+package manager
 
 import (
-	"github.com/netbirdio/management-refactor/internals/modules/peers/types"
+	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {
 	RunInTx(fn func(tx db.Transaction) error) error
-	GetPeerByID(tx db.Transaction, strength db.LockingStrength, accountID, peerId string) (*types.Peer, error)
-	GetPeers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]*types.Peer, error)
-	GetFilteredPeers(tx db.Transaction, strength db.LockingStrength, accountID string, nameFilter, ipFilter string) ([]*types.Peer, error)
-	UpdatePeer(tx db.Transaction, peer *types.Peer) error
+	GetPeerByID(tx db.Transaction, strength db.LockingStrength, accountID, peerId string) (*peers.Peer, error)
+	GetPeers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]*peers.Peer, error)
+	GetFilteredPeers(tx db.Transaction, strength db.LockingStrength, accountID string, nameFilter, ipFilter string) ([]*peers.Peer, error)
+	UpdatePeer(tx db.Transaction, peer *peers.Peer) error
 }
 
 type repository struct {
@@ -25,8 +25,8 @@ func (r *repository) RunInTx(fn func(tx db.Transaction) error) error {
 	return r.store.RunInTx(fn)
 }
 
-func (r *repository) GetPeerByID(tx db.Transaction, strength db.LockingStrength, accountID, peerId string) (*types.Peer, error) {
-	var peer types.Peer
+func (r *repository) GetPeerByID(tx db.Transaction, strength db.LockingStrength, accountID, peerId string) (*peers.Peer, error) {
+	var peer peers.Peer
 	err := r.store.GetOne(tx, strength, &peer, "account_id = ? AND id = ?", accountID, peerId)
 	if err != nil {
 		return nil, err
@@ -34,8 +34,8 @@ func (r *repository) GetPeerByID(tx db.Transaction, strength db.LockingStrength,
 	return &peer, nil
 }
 
-func (r *repository) GetPeers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]*types.Peer, error) {
-	var peers []*types.Peer
+func (r *repository) GetPeers(tx db.Transaction, strength db.LockingStrength, accountID string) ([]*peers.Peer, error) {
+	var peers []*peers.Peer
 	err := r.store.GetMany(tx, strength, &peers, "account_id = ?", accountID)
 	if err != nil {
 		return nil, err
@@ -43,7 +43,7 @@ func (r *repository) GetPeers(tx db.Transaction, strength db.LockingStrength, ac
 	return peers, nil
 }
 
-func (r *repository) GetFilteredPeers(tx db.Transaction, strength db.LockingStrength, accountID string, nameFilter, ipFilter string) ([]*types.Peer, error) {
+func (r *repository) GetFilteredPeers(tx db.Transaction, strength db.LockingStrength, accountID string, nameFilter, ipFilter string) ([]*peers.Peer, error) {
 	query := "account_id = ?"
 	args := []interface{}{accountID}
 
@@ -57,7 +57,7 @@ func (r *repository) GetFilteredPeers(tx db.Transaction, strength db.LockingStre
 		args = append(args, ipFilter)
 	}
 
-	var peers []*types.Peer
+	var peers []*peers.Peer
 	err := r.store.GetMany(tx, strength, &peers, query, args)
 	if err != nil {
 		return nil, err
@@ -65,6 +65,6 @@ func (r *repository) GetFilteredPeers(tx db.Transaction, strength db.LockingStre
 	return peers, nil
 }
 
-func (r *repository) UpdatePeer(tx db.Transaction, peer *types.Peer) error {
+func (r *repository) UpdatePeer(tx db.Transaction, peer *peers.Peer) error {
 	return r.store.Update(tx, peer)
 }

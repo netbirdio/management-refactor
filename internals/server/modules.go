@@ -6,6 +6,7 @@ import (
 	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
 	resourcesManager "github.com/netbirdio/management-refactor/internals/modules/networks/resources/manager"
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
+	peersManager "github.com/netbirdio/management-refactor/internals/modules/peers/manager"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
@@ -27,12 +28,12 @@ func (s *BaseServer) PermissionsManager() permissions.Manager {
 	})
 }
 
-func (s *BaseServer) PeersManager() *peers.Manager {
-	return Create(s, func() *peers.Manager {
+func (s *BaseServer) PeersManager() peers.Manager {
+	return Create(s, func() peers.Manager {
 		store := s.Store()
 		router := s.Router()
 		permissionsManager := s.PermissionsManager()
 
-		return peers.NewManager(store, router, permissionsManager)
+		return peersManager.NewManager(store, router, permissionsManager)
 	})
 }

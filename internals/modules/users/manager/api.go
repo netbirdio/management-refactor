@@ -1,4 +1,4 @@
-package users
+package manager
 
 import (
 	"encoding/json"

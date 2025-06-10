@@ -5,11 +5,15 @@ import (
 	"sync"
 	"time"
 
+	"github.com/netbirdio/netbird/management/server/groups"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/netbird/management/proto"
 	"github.com/netbirdio/netbird/management/server/telemetry"
 	"github.com/netbirdio/netbird/management/server/types"
+
+	"github.com/netbirdio/management-refactor/internals/modules/peers"
+	"github.com/netbirdio/management-refactor/internals/modules/policies"
 )
 
 const channelBufferSize = 100
@@ -17,9 +21,9 @@ const channelBufferSize = 100
 type UpdateMessage struct {
 	Update        *proto.SyncResponse
 	NetworkMap    *types.NetworkMap
-	PeerManager   *nbpeer.Manager
-	PolicyManager *nbpeer.PolicyManager
-	GroupManager  *nbpeer.GroupManager
+	PeerManager   *peers.Manager
+	PolicyManager *policies.Manager
+	GroupManager  *groups.Manager
 }
 
 type UpdateChannel struct {

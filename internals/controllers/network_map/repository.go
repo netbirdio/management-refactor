@@ -55,9 +55,9 @@ func (r *repository) GetNetworkMapData(accountID string) (*NetworkMapData, error
 		return nil, err
 	}
 
-	if err := r.store.Load(&networkMapData, "Peers", "Groups", "Policies", "Networks", "NetworkRouters", "NetworkResources"); err != nil {
-		return nil, err
-	}
+	// if err := r.store.Load(&networkMapData, "Peers", "Groups", "Policies", "Networks", "NetworkRouters", "NetworkResources"); err != nil {
+	// 	return nil, err
+	// }
 
 	r.metrics.RecordDBAccessDuration(time.Since(start))
 

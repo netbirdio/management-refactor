@@ -10,7 +10,7 @@ import (
 	"github.com/netbirdio/netbird/management/server/http/util"
 	"github.com/netbirdio/netbird/management/server/status"
 
-	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
@@ -25,12 +25,12 @@ type Manager interface {
 	WithPermission(module modules.Module, operation operations.Operation, handlerFunc func(w http.ResponseWriter, r *http.Request, auth *nbcontext.UserAuth)) http.HandlerFunc
 	ValidateUserPermissions(ctx context.Context, accountID, userID string, module modules.Module, operation operations.Operation) (bool, error)
 	ValidateRoleModuleAccess(ctx context.Context, accountID string, role roles.RolePermissions, module modules.Module, operation operations.Operation) bool
-	ValidateAccountAccess(ctx context.Context, accountID string, user *types.User, allowOwnerAndAdmin bool) error
+	ValidateAccountAccess(ctx context.Context, accountID string, user *users.User, allowOwnerAndAdmin bool) error
 	Init(userManager userManager)
 }
 
 type userManager interface {
-	GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*types.User, error)
+	GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error)
 }
 
 type managerImpl struct {
@@ -103,7 +103,7 @@ func (m *managerImpl) ValidateRoleModuleAccess(
 	return role.AutoAllowNew[operation]
 }
 
-func (m *managerImpl) ValidateAccountAccess(ctx context.Context, accountID string, user *types.User, allowOwnerAndAdmin bool) error {
+func (m *managerImpl) ValidateAccountAccess(ctx context.Context, accountID string, user *users.User, allowOwnerAndAdmin bool) error {
 	if user.AccountID != accountID {
 		return status.NewUserNotPartOfAccountError()
 	}

@@ -1,4 +1,4 @@
-package types
+package pats
 
 import (
 	"crypto/sha256"

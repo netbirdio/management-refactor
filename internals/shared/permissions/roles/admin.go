@@ -1,13 +1,13 @@
 package roles
 
 import (
-	"github.com/netbirdio/netbird/management/server/permissions/modules"
-	"github.com/netbirdio/netbird/management/server/permissions/operations"
-	"github.com/netbirdio/netbird/management/server/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 var Admin = RolePermissions{
-	Role: types.UserRoleAdmin,
+	Role: users.UserRoleAdmin,
 	AutoAllowNew: map[operations.Operation]bool{
 		operations.Read:  true,
 		operations.Write: true,

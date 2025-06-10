@@ -12,11 +12,12 @@ import (
 	nbjwt "github.com/netbirdio/netbird/management/server/auth/jwt"
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/store"
+	"github.com/netbirdio/netbird/management/server/types"
 
 	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
 	"github.com/netbirdio/management-refactor/internals/modules/users"
-	pattypes "github.com/netbirdio/management-refactor/internals/modules/users/pats/types"
-	"github.com/netbirdio/management-refactor/internals/modules/users/types"
+	"github.com/netbirdio/management-refactor/internals/modules/users/pats"
+
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
@@ -26,7 +27,7 @@ type Manager interface {
 	ValidateAndParseToken(ctx context.Context, value string) (nbcontext.UserAuth, *jwt.Token, error)
 	EnsureUserAccessByJWTGroups(ctx context.Context, userAuth nbcontext.UserAuth, token *jwt.Token) (nbcontext.UserAuth, error)
 	MarkPATUsed(ctx context.Context, tokenID string) error
-	GetPATInfo(ctx context.Context, token string) (user *types.User, pat *pattypes.PersonalAccessToken, domain string, category string, err error)
+	GetPATInfo(ctx context.Context, token string) (user *users.User, pat *pats.PersonalAccessToken, domain string, category string, err error)
 }
 
 type manager struct {

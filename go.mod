@@ -2,7 +2,7 @@ module github.com/netbirdio/management-refactor
 
 go 1.23.0
 
-toolchain go1.23.8
+toolchain go1.23.1
 
 require (
 	github.com/c-robinson/iplib v1.0.3

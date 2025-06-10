@@ -26,7 +26,7 @@ func NewController(store *db.Store, metrics *appmetrics.AppMetrics) *Controller 
 }
 
 func (c *Controller) UpdatePeers(accountID string) error {
-	data, err := c.repo.GetNetworkMapData(accountID)
+	_, err := c.repo.GetNetworkMapData(accountID)
 	if err != nil {
 		return fmt.Errorf("get network map data: %w", err)
 	}

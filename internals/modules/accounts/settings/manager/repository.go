@@ -1,14 +1,14 @@
 package manager
 
 import (
-	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings/types"
+	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 type Repository interface {
 	RunInTx(fn func(tx db.Transaction) error) error
-	GetAccountSettings(tx db.Transaction, strength db.LockingStrength, accountID string) (*types.Settings, error)
-	UpdateSettings(tx db.Transaction, settings *types.Settings) (*types.Settings, error)
+	GetAccountSettings(tx db.Transaction, strength db.LockingStrength, accountID string) (*settings.Settings, error)
+	UpdateSettings(tx db.Transaction, settings *settings.Settings) (*settings.Settings, error)
 }
 
 type repository struct {
@@ -23,13 +23,13 @@ func (r *repository) RunInTx(fn func(tx db.Transaction) error) error {
 	return r.store.RunInTx(fn)
 }
 
-func (r *repository) GetAccountSettings(tx db.Transaction, strength db.LockingStrength, accountID string) (*types.Settings, error) {
-	var settings types.Settings
+func (r *repository) GetAccountSettings(tx db.Transaction, strength db.LockingStrength, accountID string) (*settings.Settings, error) {
+	var settings settings.Settings
 	err := r.store.GetOne(tx, strength, &settings, "account_id = ?", accountID)
 	return &settings, err
 }
 
-func (r *repository) UpdateSettings(tx db.Transaction, settings *types.Settings) (*types.Settings, error) {
+func (r *repository) UpdateSettings(tx db.Transaction, settings *settings.Settings) (*settings.Settings, error) {
 	err := r.store.Update(tx, settings)
 	if err != nil {
 		return nil, err

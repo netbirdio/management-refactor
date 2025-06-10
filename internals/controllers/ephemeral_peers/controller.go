@@ -10,6 +10,8 @@ import (
 	"github.com/netbirdio/netbird/management/server/activity"
 	nbpeer "github.com/netbirdio/netbird/management/server/peer"
 	"github.com/netbirdio/netbird/management/server/store"
+
+	"github.com/netbirdio/management-refactor/internals/modules/peers"
 )
 
 const (
@@ -33,7 +35,7 @@ type ephemeralPeer struct {
 // Controller keep a list of ephemeral peers. After ephemeralLifeTime inactivity the peer will be deleted
 // automatically. Inactivity means the peer disconnected from the Management server.
 type Controller struct {
-	store store.Store
+	peersManager peers.Manager
 
 	headPeer  *ephemeralPeer
 	tailPeer  *ephemeralPeer
@@ -42,9 +44,9 @@ type Controller struct {
 }
 
 // NewEphemeralManager instantiate new Controller
-func NewEphemeralManager(peersManager) *Controller {
+func NewEphemeralManager(peersManager peers.Manager) *Controller {
 	return &Controller{
-		store: store,
+		peersManager: peersManager,
 	}
 }
 
@@ -119,7 +121,7 @@ func (e *Controller) OnPeerDisconnected(ctx context.Context, peer *nbpeer.Peer) 
 }
 
 func (e *Controller) loadEphemeralPeers(ctx context.Context) {
-	peers, err := e.store.GetAllEphemeralPeers(ctx, store.LockingStrengthShare)
+	peers, err := e.peersManager.GetAllEphemeralPeers(ctx, store.LockingStrengthShare)
 	if err != nil {
 		log.WithContext(ctx).Debugf("failed to load ephemeral peers: %s", err)
 		return
@@ -163,7 +165,7 @@ func (e *Controller) cleanup(ctx context.Context) {
 
 	for id, p := range deletePeers {
 		log.WithContext(ctx).Debugf("delete ephemeral peer: %s", id)
-		err := e.accountManager.DeletePeer(ctx, p.accountID, id, activity.SystemInitiator)
+		err := e.peersManager.DeletePeer(ctx, p.accountID, id, activity.SystemInitiator)
 		if err != nil {
 			log.WithContext(ctx).Errorf("failed to delete ephemeral peer: %s", err)
 		}
