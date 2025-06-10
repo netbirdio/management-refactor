@@ -7,7 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/netbirdio/management-cloud-refactor/integrations"
+	"github.com/netbirdio/management-integrations-refactor/integrations"
+
 	"github.com/netbirdio/management-refactor/internals/server"
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
