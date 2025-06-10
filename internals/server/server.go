@@ -24,7 +24,7 @@ type BaseServer struct {
 var log = logging.LoggerForThisPackage()
 
 // NewServer initializes and configures a new Server instance
-func NewServer() Server {
+func NewServer() *BaseServer {
 	return &BaseServer{
 		// @todo shared config
 		container: make(map[string]any),
@@ -60,5 +60,5 @@ func (s *BaseServer) SetContainer(key string, container any) {
 		return
 	}
 	s.container[key] = container
-	log.Infof("container with key %s set successfully", key)
+	log.Tracef("container with key %s set successfully", key)
 }
