@@ -1,5 +1,5 @@
 log_levels:
-  default: trace
+  default: debug
   management-refactor/internals/shared/activity: error
   management-refactor/internals/shared/db: debug
   management-refactor/internals/shared/permissions: debug

@@ -5,18 +5,16 @@
 package permissions
 
 import (
-	"context"
-	"net/http"
-	"reflect"
+	context "context"
+	http "net/http"
+	reflect "reflect"
 
-	"github.com/golang/mock/gomock"
+	gomock "github.com/golang/mock/gomock"
+	users "github.com/netbirdio/management-refactor/internals/modules/users"
+	modules "github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	operations "github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
+	roles "github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
 	context0 "github.com/netbirdio/netbird/management/server/context"
-
-	"github.com/netbirdio/management-refactor/internals/modules/users"
-	"github.com/netbirdio/management-refactor/internals/shared/db"
-	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
-	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
-	"github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
 )
 
 // MockManager is a mock of Manager interface.
@@ -40,18 +38,6 @@ func NewMockManager(ctrl *gomock.Controller) *MockManager {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockManager) EXPECT() *MockManagerMockRecorder {
 	return m.recorder
-}
-
-// Init mocks base method.
-func (m *MockManager) Init(userManager userManager) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "Init", userManager)
-}
-
-// Init indicates an expected call of Init.
-func (mr *MockManagerMockRecorder) Init(userManager interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Init", reflect.TypeOf((*MockManager)(nil).Init), userManager)
 }
 
 // ValidateAccountAccess mocks base method.
@@ -109,44 +95,6 @@ func (m *MockManager) WithPermission(module modules.Module, operation operations
 func (mr *MockManagerMockRecorder) WithPermission(module, operation, handlerFunc interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WithPermission", reflect.TypeOf((*MockManager)(nil).WithPermission), module, operation, handlerFunc)
-}
-
-// MockuserManager is a mock of userManager interface.
-type MockuserManager struct {
-	ctrl     *gomock.Controller
-	recorder *MockuserManagerMockRecorder
-}
-
-// MockuserManagerMockRecorder is the mock recorder for MockuserManager.
-type MockuserManagerMockRecorder struct {
-	mock *MockuserManager
-}
-
-// NewMockuserManager creates a new mock instance.
-func NewMockuserManager(ctrl *gomock.Controller) *MockuserManager {
-	mock := &MockuserManager{ctrl: ctrl}
-	mock.recorder = &MockuserManagerMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockuserManager) EXPECT() *MockuserManagerMockRecorder {
-	return m.recorder
-}
-
-// GetUserByID mocks base method.
-func (m *MockuserManager) GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserByID", ctx, tx, strength, id)
-	ret0, _ := ret[0].(*users.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUserByID indicates an expected call of GetUserByID.
-func (mr *MockuserManagerMockRecorder) GetUserByID(ctx, tx, strength, id interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByID", reflect.TypeOf((*MockuserManager)(nil).GetUserByID), ctx, tx, strength, id)
 }
 
 // MockPermissionValidator is a mock of PermissionValidator interface.

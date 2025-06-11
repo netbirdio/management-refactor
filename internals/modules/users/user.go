@@ -1,14 +1,11 @@
 package users
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/netbirdio/netbird/management/server/idp"
 	"github.com/netbirdio/netbird/management/server/integration_reference"
 
-	"github.com/netbirdio/management-refactor/internals/modules/accounts/settings"
 	"github.com/netbirdio/management-refactor/internals/modules/users/pats"
 )
 
@@ -18,6 +15,8 @@ const (
 	UserRoleUser         UserRole = "user"
 	UserRoleUnknown      UserRole = "unknown"
 	UserRoleBillingAdmin UserRole = "billing_admin"
+	UserRoleAuditor      UserRole = "auditor"
+	UserRoleNetworkAdmin UserRole = "network_admin"
 
 	UserStatusActive   UserStatus = "active"
 	UserStatusDisabled UserStatus = "disabled"
@@ -127,64 +126,6 @@ func (u *User) IsAdminOrServiceUser() bool {
 // IsRegularUser checks if the user is a regular user.
 func (u *User) IsRegularUser() bool {
 	return !u.HasAdminPower() && !u.IsServiceUser
-}
-
-// ToUserInfo converts a User object to a UserInfo object.
-func (u *User) ToUserInfo(userData *idp.UserData, settings *settings.Settings) (*UserInfo, error) {
-	autoGroups := u.AutoGroups
-	if autoGroups == nil {
-		autoGroups = []string{}
-	}
-
-	dashboardViewPermissions := "full"
-	if !u.HasAdminPower() {
-		dashboardViewPermissions = "limited"
-		if settings.RegularUsersViewBlocked {
-			dashboardViewPermissions = "blocked"
-		}
-	}
-
-	if userData == nil {
-		return &UserInfo{
-			ID:            u.Id,
-			Email:         "",
-			Name:          u.ServiceUserName,
-			Role:          string(u.Role),
-			AutoGroups:    u.AutoGroups,
-			Status:        string(UserStatusActive),
-			IsServiceUser: u.IsServiceUser,
-			IsBlocked:     u.Blocked,
-			LastLogin:     u.GetLastLogin(),
-			Issued:        u.Issued,
-			Permissions: UserPermissions{
-				DashboardView: dashboardViewPermissions,
-			},
-		}, nil
-	}
-	if userData.ID != u.Id {
-		return nil, fmt.Errorf("wrong UserData provided for user %s", u.Id)
-	}
-
-	userStatus := UserStatusActive
-	if userData.AppMetadata.WTPendingInvite != nil && *userData.AppMetadata.WTPendingInvite {
-		userStatus = UserStatusInvited
-	}
-
-	return &UserInfo{
-		ID:            u.Id,
-		Email:         userData.Email,
-		Name:          userData.Name,
-		Role:          string(u.Role),
-		AutoGroups:    autoGroups,
-		Status:        string(userStatus),
-		IsServiceUser: u.IsServiceUser,
-		IsBlocked:     u.Blocked,
-		LastLogin:     u.GetLastLogin(),
-		Issued:        u.Issued,
-		Permissions: UserPermissions{
-			DashboardView: dashboardViewPermissions,
-		},
-	}, nil
 }
 
 // Copy the user

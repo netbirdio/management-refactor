@@ -4,44 +4,48 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	nbcontext "github.com/netbirdio/netbird/management/server/context"
+	"github.com/netbirdio/netbird/management/server/http/util"
 
+	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
+	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 type handler struct {
-	manager            *Manager
-	permissionsManager permissions.Manager
+	manager peers.Manager
 }
 
-func newHandler(manager *Manager, permissionsManager permissions.Manager) *handler {
-	return &handler{
-		manager:            manager,
-		permissionsManager: permissionsManager,
+func RegisterEndpoints(router *mux.Router, permissionsManager permissions.Manager, manager peers.Manager) {
+	h := &handler{
+		manager: manager,
 	}
+
+	router.HandleFunc("/peers", permissionsManager.WithPermission(modules.Peers, operations.Read, h.getAllPeers)).Methods("GET", "OPTIONS")
+	router.HandleFunc("/peers/{peerId}", permissionsManager.WithPermission(modules.Peers, operations.Read, h.getPeer)).Methods("GET", "OPTIONS")
+	router.HandleFunc("/peers/{peerId}", permissionsManager.WithPermission(modules.Peers, operations.Write, h.updatePeer)).Methods("PUT", "OPTIONS")
+	router.HandleFunc("/peers/{peerId}", permissionsManager.WithPermission(modules.Peers, operations.Write, h.deletePeer)).Methods("DELETE", "OPTIONS")
+	router.HandleFunc("/peers/{peerId}/accessible-peers", permissionsManager.WithPermission(modules.Peers, operations.Read, h.getAccessiblePeers)).Methods("GET", "OPTIONS")
 }
 
-func (h *handler) RegisterEndpoints(router *mux.Router) {
-	router.HandleFunc("/peers", h.getAllPeers).Methods("GET", "OPTIONS")
-	router.HandleFunc("/peers/{peerId}", h.getPeer).Methods("GET", "OPTIONS")
-	router.HandleFunc("/peers/{peerId}", h.updatePeer).Methods("PUT", "OPTIONS")
-	router.HandleFunc("/peers/{peerId}", h.deletePeer).Methods("DELETE", "OPTIONS")
-	router.HandleFunc("/peers/{peerId}/accessible-peers", h.getAccessiblePeers).Methods("GET", "OPTIONS")
+func (h *handler) getAllPeers(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
+	peers := []peers.Peer{{ID: "peer1"}, {ID: "peer2"}}
+	util.WriteJSONObject(r.Context(), w, peers)
 }
 
-func (h *handler) getAllPeers(w http.ResponseWriter, r *http.Request) {}
-
-func (h *handler) getPeer(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (h *handler) updatePeer(w http.ResponseWriter, r *http.Request) {
+func (h *handler) getPeer(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
 
 }
 
-func (h *handler) deletePeer(w http.ResponseWriter, r *http.Request) {
+func (h *handler) updatePeer(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
 
 }
 
-func (h *handler) getAccessiblePeers(w http.ResponseWriter, r *http.Request) {
+func (h *handler) deletePeer(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
+
+}
+
+func (h *handler) getAccessiblePeers(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
 
 }

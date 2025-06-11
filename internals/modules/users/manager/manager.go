@@ -3,11 +3,8 @@ package manager
 import (
 	"context"
 
-	"github.com/gorilla/mux"
-
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
-	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
@@ -17,11 +14,9 @@ type Manager struct {
 	repo Repository
 }
 
-func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager) *Manager {
+func NewManager(store *db.Store) *Manager {
 	repo := newRepository(store)
 	m := &Manager{repo: repo}
-	api := newHandler(m, permissionsManager)
-	api.RegisterEndpoints(router)
 	return m
 }
 

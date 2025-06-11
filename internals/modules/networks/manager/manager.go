@@ -4,13 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/gorilla/mux"
 	"github.com/rs/xid"
 
 	"github.com/netbirdio/management-refactor/internals/modules/networks"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/hook"
-	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 )
 
 type managerImpl struct {
@@ -19,16 +17,10 @@ type managerImpl struct {
 	onNetworkDelete *hook.Hook[*networks.NetworkEvent]
 }
 
-func NewManager(store *db.Store, router *mux.Router, permissionsManager permissions.Manager) networks.Manager {
-	repo := newRepository(store)
-	m := &managerImpl{
-		repo: repo,
-
-		onNetworkDelete: &hook.Hook[*networks.NetworkEvent]{},
+func NewManager(store *db.Store) networks.Manager {
+	return &managerImpl{
+		repo: newRepository(store),
 	}
-	api := newHandler(m, permissionsManager)
-	api.RegisterEndpoints(router)
-	return m
 }
 
 func (m *managerImpl) GetAllNetworks(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID, userID string) ([]*networks.Network, error) {

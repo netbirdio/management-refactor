@@ -5,48 +5,27 @@ import (
 
 	"github.com/gorilla/mux"
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
-	"github.com/netbirdio/netbird/management/server/http/util"
 
 	"github.com/netbirdio/management-refactor/internals/modules/networks"
-	"github.com/netbirdio/management-refactor/internals/shared/errors"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 )
 
 type handler struct {
-	manager            networks.Manager
-	permissionsManager permissions.Manager
+	manager networks.Manager
 }
 
-func newHandler(manager networks.Manager, permissionsManager permissions.Manager) *handler {
-	return &handler{
-		manager:            manager,
-		permissionsManager: permissionsManager,
+func RegisterEndpoints(router *mux.Router, permissionsManager permissions.Manager, manager networks.Manager) {
+	h := &handler{
+		manager: manager,
 	}
+
+	router.HandleFunc("/networks/{id}", permissionsManager.WithPermission(modules.Networks, operations.Write, h.deleteNetwork)).Methods("DELETE", "OPTIONS")
 }
 
-func (h *handler) RegisterEndpoints(router *mux.Router) {
-	router.HandleFunc("/networks/{id}", h.deleteNetwork).Methods("DELETE", "OPTIONS")
-}
-
-func (h *handler) deleteNetwork(w http.ResponseWriter, r *http.Request) {
-	userAuth, err := nbcontext.GetUserAuthFromContext(r.Context())
-	if err != nil {
-		util.WriteError(r.Context(), err, w)
-		return
-	}
-
-	allowed, err := h.permissionsManager.ValidateUserPermissions(r.Context(), userAuth.AccountId, userAuth.UserId, modules.Networks, operations.Write)
-	if err != nil {
-		util.WriteError(r.Context(), errors.NewPermissionValidationError(err), w)
-		return
-	}
-	if !allowed {
-		util.WriteError(r.Context(), errors.NewPermissionDeniedError(), w)
-	}
-
-	err = h.manager.DeleteNetwork(r.Context(), nil, userAuth.AccountId, userAuth.UserId, mux.Vars(r)["id"])
+func (h *handler) deleteNetwork(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
+	err := h.manager.DeleteNetwork(r.Context(), nil, userAuth.AccountId, userAuth.UserId, mux.Vars(r)["id"])
 	if err != nil {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
