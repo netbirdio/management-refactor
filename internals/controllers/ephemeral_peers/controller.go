@@ -5,13 +5,11 @@ import (
 	"sync"
 	"time"
 
+	nbpeer "github.com/netbirdio/netbird/management/server/peer"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/netbirdio/management-refactor/management/server/activity"
-	nbpeer "github.com/netbirdio/management-refactor/management/server/peer"
-	"github.com/netbirdio/management-refactor/management/server/store"
-
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 const (
@@ -77,7 +75,7 @@ func (e *Controller) Stop() {
 
 // OnPeerConnected remove the peer from the linked list of ephemeral peers. Because it has been called when the peer
 // is active the manager will not delete it while it is active.
-func (e *Controller) OnPeerConnected(ctx context.Context, peer *nbpeer.Peer) {
+func (e *Controller) OnPeerConnected(ctx context.Context, peer *peers.Peer) {
 	if !peer.Ephemeral {
 		return
 	}
@@ -121,7 +119,7 @@ func (e *Controller) OnPeerDisconnected(ctx context.Context, peer *nbpeer.Peer) 
 }
 
 func (e *Controller) loadEphemeralPeers(ctx context.Context) {
-	peers, err := e.peersManager.GetAllEphemeralPeers(ctx, store.LockingStrengthShare)
+	peers, err := e.peersManager.GetAllEphemeralPeers(ctx, nil, db.LockingStrengthShare)
 	if err != nil {
 		log.WithContext(ctx).Debugf("failed to load ephemeral peers: %s", err)
 		return
@@ -165,7 +163,7 @@ func (e *Controller) cleanup(ctx context.Context) {
 
 	for id, p := range deletePeers {
 		log.WithContext(ctx).Debugf("delete ephemeral peer: %s", id)
-		err := e.peersManager.DeletePeer(ctx, p.accountID, id, activity.SystemInitiator)
+		err := e.peersManager.DeletePeer(ctx, nil, p.accountID, id)
 		if err != nil {
 			log.WithContext(ctx).Errorf("failed to delete ephemeral peer: %s", err)
 		}

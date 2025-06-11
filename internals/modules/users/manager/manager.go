@@ -14,10 +14,8 @@ type Manager struct {
 	repo Repository
 }
 
-func NewManager(store *db.Store) *Manager {
-	repo := newRepository(store)
-	m := &Manager{repo: repo}
-	return m
+func NewManager(repo Repository) *Manager {
+	return &Manager{repo: repo}
 }
 
 func (m *Manager) GetAllUsers(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID string) ([]users.User, error) {

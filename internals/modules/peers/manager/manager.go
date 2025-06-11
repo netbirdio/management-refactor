@@ -20,8 +20,8 @@ type Manager struct {
 	networkMapController network_map.Controller
 }
 
-func NewManager(store *db.Store) *Manager {
-	return &Manager{repo: newRepository(store)}
+func NewManager(repo Repository) *Manager {
+	return &Manager{repo: repo}
 }
 
 func (m *Manager) SetNetworkMapController(networkMapController network_map.Controller) {
@@ -50,4 +50,14 @@ func (m *Manager) UpdatePeer(ctx context.Context, tx db.Transaction, peer *peers
 	_ = m.networkMapController.UpdatePeers(ctx, peer.AccountID)
 
 	return nil
+}
+
+func (m *Manager) GetAllEphemeralPeers(ctx context.Context, tx db.Transaction, strength db.LockingStrength) ([]*peers.Peer, error) {
+	// TODO implement me
+	panic("implement me")
+}
+
+func (m *Manager) DeletePeer(ctx context.Context, tx db.Transaction, accountID, peerID string) error {
+	// TODO implement me
+	panic("implement me")
 }

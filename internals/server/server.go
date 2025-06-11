@@ -28,7 +28,6 @@ var log = logging.LoggerForThisPackage()
 // NewServer initializes and configures a new Server instance
 func NewServer() *BaseServer {
 	return &BaseServer{
-		// @todo shared config
 		container: make(map[string]any),
 	}
 }

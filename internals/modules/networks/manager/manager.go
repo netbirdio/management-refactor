@@ -13,13 +13,11 @@ import (
 
 type managerImpl struct {
 	repo Repository
-
-	onNetworkDelete *hook.Hook[*networks.NetworkEvent]
 }
 
-func NewManager(store *db.Store) networks.Manager {
+func NewManager(repo Repository) networks.Manager {
 	return &managerImpl{
-		repo: newRepository(store),
+		repo: repo,
 	}
 }
 

@@ -7,13 +7,19 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/netbirdio/management-integrations-refactor/integrations"
-
 	"github.com/netbirdio/management-refactor/internals/server"
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 var log = logging.LoggerForThisPackage
+
+var newServer = func() server.Server {
+	return server.NewServer()
+}
+
+func SetNewServer(fn func() server.Server) {
+	newServer = fn
+}
 
 // mgmtCmd starts the management server
 var mgmtCmd = &cobra.Command{
@@ -25,7 +31,7 @@ var mgmtCmd = &cobra.Command{
 			log().Debugf("Failed to init logging: %v", err)
 		}
 
-		srv := integrations.InitCloud(server.NewServer())
+		srv := newServer()
 
 		go func() {
 			log().Info("Starting server on :8080")

@@ -13,4 +13,6 @@ type Manager interface {
 	GetPeers(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID string) ([]*Peer, error)
 	GetFilteredPeers(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID, nameFilter, ipFilter string) ([]*Peer, error)
 	UpdatePeer(ctx context.Context, tx db.Transaction, peer *Peer) error
+	GetAllEphemeralPeers(ctx context.Context, tx db.Transaction, strength db.LockingStrength) ([]*Peer, error)
+	DeletePeer(ctx context.Context, tx db.Transaction, accountID, peerID string) error
 }

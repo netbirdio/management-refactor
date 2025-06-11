@@ -16,24 +16,11 @@ type managerImpl struct {
 	networkManager networks.Manager
 }
 
-func NewManager(store *db.Store, router *mux.Router, networkManager networks.Manager) resources.Manager {
-	repo := newRepository(store)
-	m := &managerImpl{
+func NewManager(repo Repository, router *mux.Router, networkManager networks.Manager) resources.Manager {
+	return &managerImpl{
 		repo:           repo,
 		networkManager: networkManager,
 	}
-
-	networkManager.OnNetworkDelete().BindFunc(func(e *networks.NetworkEvent) error {
-		if err := m.DeleteResourcesInNetwork(e.Context, e.Tx, e.Network); err != nil {
-			return fmt.Errorf("failed to delete resources in network: %w", err)
-		}
-
-		return e.Next()
-	})
-
-	// api := newHandler(m, permissionsManager)
-	// api.RegisterEndpoints(router)
-	return m
 }
 
 func (m *managerImpl) GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, network *networks.Network) ([]*resources.NetworkResource, error) {

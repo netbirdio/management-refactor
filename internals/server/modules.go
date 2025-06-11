@@ -14,13 +14,15 @@ import (
 
 func (s *BaseServer) NetworksManager() networks.Manager {
 	return Create(s, func() networks.Manager {
-		return manager.NewManager(s.Store())
+		repo := manager.NewRepository(s.Store())
+		return manager.NewManager(repo)
 	})
 }
 
 func (s *BaseServer) ResourcesManager() resources.Manager {
 	return Create(s, func() resources.Manager {
-		manager := resourcesManager.NewManager(s.Store(), s.Router(), s.NetworksManager())
+		repo := resourcesManager.NewRepository(s.Store())
+		manager := resourcesManager.NewManager(repo, s.Router(), s.NetworksManager())
 		return manager
 	})
 }
@@ -33,7 +35,8 @@ func (s *BaseServer) PermissionsManager() permissions.Manager {
 
 func (s *BaseServer) PeersManager() peers.Manager {
 	return Create(s, func() peers.Manager {
-		manager := peersManager.NewManager(s.Store())
+		repo := peersManager.NewRepository(s.Store())
+		manager := peersManager.NewManager(repo)
 		s.AfterInit(func(s *BaseServer) {
 			peersManager.RegisterEndpoints(s.Router(), s.PermissionsManager(), manager)
 			manager.SetNetworkMapController(s.NetworkMapController())
@@ -44,7 +47,8 @@ func (s *BaseServer) PeersManager() peers.Manager {
 
 func (s *BaseServer) UsersManager() users.Manager {
 	return Create(s, func() users.Manager {
-		manager := usersManager.NewManager(s.Store())
+		repo := usersManager.NewRepository(s.Store())
+		manager := usersManager.NewManager(repo)
 		s.AfterInit(func(s *BaseServer) {
 			usersManager.RegisterEndpoints(s.Router(), s.PermissionsManager(), manager)
 		})

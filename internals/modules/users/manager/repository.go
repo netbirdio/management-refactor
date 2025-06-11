@@ -16,7 +16,7 @@ type repository struct {
 	store *db.Store
 }
 
-func newRepository(s *db.Store) Repository {
+func NewRepository(s *db.Store) Repository {
 	err := s.AutoMigrate(users.User{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate: %v", err)
