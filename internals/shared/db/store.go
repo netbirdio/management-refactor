@@ -9,7 +9,7 @@ import (
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
-var log = logging.LoggerForThisPackage()
+var log = logging.LoggerForThisPackage
 
 type Store struct {
 	db *gorm.DB

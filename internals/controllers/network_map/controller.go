@@ -4,5 +4,4 @@ import "context"
 
 type Controller interface {
 	UpdatePeers(ctx context.Context, accountID string) error
-	CalculateNetworkMap(data *NetworkMapData) (*NetworkMap, error)
 }

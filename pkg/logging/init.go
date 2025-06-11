@@ -62,7 +62,7 @@ func Init(configFilePath string) error {
 	// Optionally, define a default logger for packages not explicitly listed
 	if _, ok := loggers["default"]; !ok {
 		defaultLogger := logrus.New()
-		defaultLogger.SetLevel(logrus.InfoLevel)
+		defaultLogger.SetLevel(logrus.TraceLevel)
 		loggers["default"] = defaultLogger
 	}
 

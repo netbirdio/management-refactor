@@ -2,73 +2,53 @@ package controller
 
 import (
 	"context"
-	"fmt"
-	"sync"
-
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/management-refactor/internals/controllers/network_map"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	appmetrics "github.com/netbirdio/management-refactor/internals/shared/metrics"
+	"github.com/netbirdio/management-refactor/pkg/logging"
 )
+
+var log = logging.LoggerForThisPackage
 
 type Controller struct {
 	repo          Repository
 	metrics       *metrics
-	updateChannel *UpdateChannel
+	UpdateChannel network_map.UpdateChannel
 }
 
-func NewController(store *db.Store, metrics *appmetrics.AppMetrics) *Controller {
+func NewController(store *db.Store, metrics *appmetrics.AppMetrics, updateChannel network_map.UpdateChannel) *Controller {
 	cMetrics, err := appmetrics.RegisterMetrics(metrics, newMetrics)
 	if err != nil {
-		log.Fatalf("Failed to register app metrics: %v", err)
+		log().Fatalf("Failed to register app metrics: %v", err)
 	}
 	return &Controller{
 		repo:          newRepository(store, cMetrics),
 		metrics:       cMetrics,
-		updateChannel: NewUpdateChannel(cMetrics),
+		UpdateChannel: updateChannel,
 	}
 }
 
-func (c *Controller) CalculateNetworkMap(data *network_map.NetworkMapData) (*network_map.NetworkMap, error) {
+func (c *Controller) CalculateNetworkMap(accountID string) (*network_map.NetworkMap, error) {
+	_, err := c.repo.GetNetworkMapData(accountID)
+	if err != nil {
+		// usually return error
+	}
+
 	// Do calc on data
+
+	log().Tracef("Calculating network map for account on public")
 
 	return &network_map.NetworkMap{}, nil
 }
 
 func (c *Controller) UpdatePeers(ctx context.Context, accountID string) error {
-	data, err := c.repo.GetNetworkMapData(accountID)
+	_, err := c.CalculateNetworkMap(accountID)
 	if err != nil {
-		return fmt.Errorf("get network map data: %w", err)
+		log().Errorf("Failed to calculate network map for account %s: %v", accountID, err)
+		return err
 	}
-
-	var wg sync.WaitGroup
-	semaphore := make(chan struct{}, 10)
-
-	for _, peer := range data.Peers {
-		if !c.updateChannel.HasChannel(peer.ID) {
-			log.WithContext(ctx).Tracef("peer %s doesn't have a channel, skipping network map update", peer.ID)
-			continue
-		}
-
-		wg.Add(1)
-		semaphore <- struct{}{}
-		go func(p *nbpeer.Peer) {
-			defer wg.Done()
-			defer func() { <-semaphore }()
-
-			// TODO: posture checks
-
-			_, err := c.CalculateNetworkMap(data)
-			if err != nil {
-				log.WithContext(ctx).Errorf("failed to calculate network map for peer %s: %v", p.ID, err)
-				return
-			}
-
-			c.updateChannel.SendUpdate(ctx, p.ID, &network_map.UpdateMessage{})
-		}(&peer)
-	}
+	c.UpdateChannel.SendUpdate(ctx, accountID, &network_map.UpdateMessage{})
 
 	return nil
 }

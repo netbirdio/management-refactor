@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/http/util"
+	"github.com/netbirdio/netbird/management/server/status"
 
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
@@ -39,7 +40,24 @@ func (h *handler) getPeer(w http.ResponseWriter, r *http.Request, userAuth *nbco
 }
 
 func (h *handler) updatePeer(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {
+	vars := mux.Vars(r)
+	peerID, ok := vars["peerId"]
+	if !ok {
+		util.WriteError(r.Context(), status.Errorf(status.InvalidArgument, "peer ID field is missing"), w)
+		return
+	}
+	if len(peerID) == 0 {
+		util.WriteError(r.Context(), status.Errorf(status.InvalidArgument, "peer ID can't be empty"), w)
+		return
+	}
 
+	err := h.manager.UpdatePeer(r.Context(), nil, &peers.Peer{ID: peerID, AccountID: peerID})
+	if err != nil {
+		util.WriteErrorResponse("Failed to update peer", http.StatusInternalServerError, w)
+		return
+	}
+
+	util.WriteJSONObject(r.Context(), w, map[string]string{"status": "success"})
 }
 
 func (h *handler) deletePeer(w http.ResponseWriter, r *http.Request, userAuth *nbcontext.UserAuth) {

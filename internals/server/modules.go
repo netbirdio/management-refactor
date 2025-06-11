@@ -14,7 +14,7 @@ import (
 
 func (s *BaseServer) NetworksManager() networks.Manager {
 	return Create(s, func() networks.Manager {
-		return manager.NewManager(s.Store(), s.Router(), s.PermissionsManager())
+		return manager.NewManager(s.Store())
 	})
 }
 
@@ -36,6 +36,7 @@ func (s *BaseServer) PeersManager() peers.Manager {
 		manager := peersManager.NewManager(s.Store())
 		s.AfterInit(func(s *BaseServer) {
 			peersManager.RegisterEndpoints(s.Router(), s.PermissionsManager(), manager)
+			manager.SetNetworkMapController(s.NetworkMapController())
 		})
 		return manager
 	})

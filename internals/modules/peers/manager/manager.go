@@ -3,24 +3,30 @@ package manager
 import (
 	"context"
 
+	"github.com/netbirdio/management-refactor/internals/controllers/network_map"
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
-var log = logging.LoggerForThisPackage()
+var log = logging.LoggerForThisPackage
 
 var _ peers.Manager = (*Manager)(nil)
 
 type Manager struct {
-	repo         Repository
-	eventManager *activity.Manager
+	repo                 Repository
+	eventManager         *activity.Manager
+	networkMapController network_map.Controller
 }
 
 func NewManager(store *db.Store) *Manager {
 	return &Manager{repo: newRepository(store)}
+}
 
+func (m *Manager) SetNetworkMapController(networkMapController network_map.Controller) {
+	log().Tracef("Setting network map controller for peers manager")
+	m.networkMapController = networkMapController
 }
 
 func (m *Manager) GetPeer(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountID, peerID string) (*peers.Peer, error) {
@@ -36,5 +42,12 @@ func (m *Manager) GetFilteredPeers(ctx context.Context, tx db.Transaction, stren
 }
 
 func (m *Manager) UpdatePeer(ctx context.Context, tx db.Transaction, peer *peers.Peer) error {
-	return m.repo.UpdatePeer(tx, peer)
+	// err := m.repo.UpdatePeer(tx, peer)
+	// if err != nil {
+	// 	return fmt.Errorf("failed to update peer: %w", err)
+	// }
+
+	_ = m.networkMapController.UpdatePeers(ctx, peer.AccountID)
+
+	return nil
 }
