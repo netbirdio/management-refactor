@@ -1,5 +1,7 @@
 package manager
 
+//go:generate go run github.com/golang/mock/mockgen -package manager -destination=manager_mock.go -source=../interface.go -build_flags=-mod=mod
+
 import (
 	"context"
 
@@ -20,5 +22,12 @@ func (m *Manager) GetAllUsers(ctx context.Context, tx db.Transaction, strength d
 }
 
 func (m *Manager) GetUserByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*users.User, error) {
-	return m.repo.GetUserByID(tx, strength, id)
+	user, err := m.repo.GetUserByID(tx, strength, id)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Issued = "****"
+
+	return user, nil
 }

@@ -13,7 +13,6 @@ import (
 	"gorm.io/gorm/logger"
 
 	"github.com/netbirdio/management-refactor/internals/shared/errors"
-	"github.com/netbirdio/management-refactor/pkg/configuration"
 )
 
 const (
@@ -26,15 +25,11 @@ type DatabaseConn struct {
 }
 
 // NewDatabaseConn creates a new database connection based on the store engine
-func NewDatabaseConn(ctx context.Context) (*DatabaseConn, error) {
-	cfg, err := configuration.Parse[config]()
-	if err != nil {
-		log.Fatalf("failed to parse config: %v", err)
-	}
-
+func NewDatabaseConn(ctx context.Context, cfg *Config) (*DatabaseConn, error) {
 	log.WithContext(ctx).Infof("using %s store engine", cfg.Engine)
 
 	var db *gorm.DB
+	var err error
 	switch Engine(cfg.Engine) {
 	case SqliteStoreEngine:
 		db, err = openSQLiteDB(cfg)
@@ -76,7 +71,7 @@ func openMemoryDB() (*gorm.DB, error) {
 }
 
 // openSQLiteDB opens a new connection to a SQLite database
-func openSQLiteDB(cfg *config) (*gorm.DB, error) {
+func openSQLiteDB(cfg *Config) (*gorm.DB, error) {
 	storeStr := fmt.Sprintf("%s?cache=shared", storeSqliteFileName)
 	if runtime.GOOS == "windows" {
 		// To avoid `The process cannot access the file because it is being used by another process` on Windows
@@ -93,7 +88,7 @@ func openSQLiteDB(cfg *config) (*gorm.DB, error) {
 }
 
 // openPostgresDB opens a new connection to a Postgres database
-func openPostgresDB(cfg *config) (*gorm.DB, error) {
+func openPostgresDB(cfg *Config) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(cfg.PostgresDsn), getGormConfig())
 	if err != nil {
 		return nil, err

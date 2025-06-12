@@ -1,5 +1,7 @@
 package manager
 
+//go:generate go run github.com/golang/mock/mockgen -package manager -destination=repository_mock.go -source=./repository.go -build_flags=-mod=mod
+
 import (
 	log "github.com/sirupsen/logrus"
 

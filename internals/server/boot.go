@@ -14,12 +14,19 @@ import (
 	"github.com/netbirdio/management-refactor/internals/shared/api/rest"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/metrics"
+	"github.com/netbirdio/management-refactor/pkg/configuration"
 )
 
 func (s *BaseServer) Store() *db.Store {
 	return Create(s, func() *db.Store {
 		ctx := context.Background()
-		dbConn, err := db.NewDatabaseConn(ctx)
+
+		cfg, err := configuration.Parse[db.Config]()
+		if err != nil {
+			log.Fatalf("failed to parse config: %v", err)
+		}
+
+		dbConn, err := db.NewDatabaseConn(ctx, cfg)
 		if err != nil {
 			log.Fatalf("error while creating database connection: %s", err)
 		}
