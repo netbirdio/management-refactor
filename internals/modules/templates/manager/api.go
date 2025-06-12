@@ -5,11 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/netbirdio/management-refactor/integrations/shared/api"
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 
-	"github.com/netbirdio/management-refactor/internals/modules/template"
-	"github.com/netbirdio/management-refactor/internals/modules/users"
+	"github.com/netbirdio/management-refactor/internals/modules/templates"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
@@ -17,10 +15,10 @@ import (
 )
 
 type handler struct {
-	manager template.Manager
+	manager templates.Manager
 }
 
-func RegisterEndpoints(router *mux.Router, permissionsManager permissions.Manager, manager template.Manager) {
+func RegisterEndpoints(router *mux.Router, permissionsManager permissions.Manager, manager templates.Manager) {
 	h := &handler{
 		manager: manager,
 	}
@@ -60,7 +58,7 @@ func (h *handler) createTemplate(w http.ResponseWriter, r *http.Request, userAut
 		return
 	}
 
-	templateObj := &template.Template{}
+	templateObj := &templates.Template{}
 	templateObj.FromAPIRequest(templateReq)
 
 	err := templateObj.Validate()
@@ -89,7 +87,7 @@ func (h *handler) updateTemplate(w http.ResponseWriter, r *http.Request, userAut
 		return
 	}
 
-	templateObj := &template.Template{}
+	templateObj := &templates.Template{}
 	templateObj.FromAPIRequest(templateReq)
 	templateObj.Id = templateId
 

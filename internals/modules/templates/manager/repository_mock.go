@@ -9,7 +9,7 @@ import (
 	reflect "reflect"
 
 	gomock "github.com/golang/mock/gomock"
-	template "github.com/netbirdio/management-refactor/internals/modules/template"
+	templates "github.com/netbirdio/management-refactor/internals/modules/templates"
 	db "github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
@@ -37,10 +37,10 @@ func (m *MockRepository) EXPECT() *MockRepositoryMockRecorder {
 }
 
 // CreateTemplate mocks base method.
-func (m *MockRepository) CreateTemplate(ctx context.Context, tx db.Transaction, template *template.Template) (*template.Template, error) {
+func (m *MockRepository) CreateTemplate(ctx context.Context, tx db.Transaction, template *templates.Template) (*templates.Template, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateTemplate", ctx, tx, template)
-	ret0, _ := ret[0].(*template.Template)
+	ret0, _ := ret[0].(*templates.Template)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -52,7 +52,7 @@ func (mr *MockRepositoryMockRecorder) CreateTemplate(ctx, tx, template interface
 }
 
 // DeleteTemplate mocks base method.
-func (m *MockRepository) DeleteTemplate(ctx context.Context, tx db.Transaction, template *template.Template) error {
+func (m *MockRepository) DeleteTemplate(ctx context.Context, tx db.Transaction, template *templates.Template) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DeleteTemplate", ctx, tx, template)
 	ret0, _ := ret[0].(error)
@@ -66,10 +66,10 @@ func (mr *MockRepositoryMockRecorder) DeleteTemplate(ctx, tx, template interface
 }
 
 // GetAllTemplates mocks base method.
-func (m *MockRepository) GetAllTemplates(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountId string) ([]*template.Template, error) {
+func (m *MockRepository) GetAllTemplates(ctx context.Context, tx db.Transaction, strength db.LockingStrength, accountId string) ([]*templates.Template, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetAllTemplates", ctx, tx, strength, accountId)
-	ret0, _ := ret[0].([]*template.Template)
+	ret0, _ := ret[0].([]*templates.Template)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -81,10 +81,10 @@ func (mr *MockRepositoryMockRecorder) GetAllTemplates(ctx, tx, strength, account
 }
 
 // GetTemplateByID mocks base method.
-func (m *MockRepository) GetTemplateByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*template.Template, error) {
+func (m *MockRepository) GetTemplateByID(ctx context.Context, tx db.Transaction, strength db.LockingStrength, id string) (*templates.Template, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTemplateByID", ctx, tx, strength, id)
-	ret0, _ := ret[0].(*template.Template)
+	ret0, _ := ret[0].(*templates.Template)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -110,10 +110,10 @@ func (mr *MockRepositoryMockRecorder) RunInTx(fn interface{}) *gomock.Call {
 }
 
 // UpdateTemplate mocks base method.
-func (m *MockRepository) UpdateTemplate(ctx context.Context, tx db.Transaction, template *template.Template) (*template.Template, error) {
+func (m *MockRepository) UpdateTemplate(ctx context.Context, tx db.Transaction, template *templates.Template) (*templates.Template, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateTemplate", ctx, tx, template)
-	ret0, _ := ret[0].(*template.Template)
+	ret0, _ := ret[0].(*templates.Template)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
