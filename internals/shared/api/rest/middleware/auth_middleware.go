@@ -7,11 +7,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/netbirdio/netbird/formatter/hook"
 	"github.com/netbirdio/netbird/management/server/auth"
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/http/middleware/bypass"
-
-	"github.com/netbirdio/management-refactor/pkg/logging/hook"
 )
 
 // AuthMiddleware middleware to verify personal access tokens (PAT) and JWT tokens

@@ -5,10 +5,7 @@ import (
 
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage()
 
 type Manager struct {
 	repo Repository

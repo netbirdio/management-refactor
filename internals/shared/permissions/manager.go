@@ -9,6 +9,7 @@ import (
 	nbcontext "github.com/netbirdio/netbird/management/server/context"
 	"github.com/netbirdio/netbird/management/server/http/util"
 	"github.com/netbirdio/netbird/management/server/status"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
@@ -16,10 +17,7 @@ import (
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage()
 
 type Manager interface {
 	WithPermission(module modules.Module, operation operations.Operation, handlerFunc func(w http.ResponseWriter, r *http.Request, auth *nbcontext.UserAuth)) http.HandlerFunc

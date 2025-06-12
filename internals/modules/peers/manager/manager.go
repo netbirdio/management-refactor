@@ -3,14 +3,13 @@ package manager
 import (
 	"context"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/internals/controllers/network_map"
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage
 
 var _ peers.Manager = (*Manager)(nil)
 
@@ -25,7 +24,7 @@ func NewManager(repo Repository) *Manager {
 }
 
 func (m *Manager) SetNetworkMapController(networkMapController network_map.Controller) {
-	log().Tracef("Setting network map controller for peers manager")
+	log.Tracef("Setting network map controller for peers manager")
 	m.networkMapController = networkMapController
 }
 

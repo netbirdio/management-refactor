@@ -4,12 +4,11 @@ import (
 	"context"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/pkg/configuration"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage()
 
 type Manager struct {
 	cfg *config

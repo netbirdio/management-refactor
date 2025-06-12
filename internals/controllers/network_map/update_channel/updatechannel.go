@@ -5,14 +5,13 @@ import (
 	"sync"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/internals/controllers/network_map"
 	appmetrics "github.com/netbirdio/management-refactor/internals/shared/metrics"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
 const channelBufferSize = 100
-
-var log = logging.LoggerForThisPackage
 
 type UpdateChannel struct {
 	// peerChannels is an update channel indexed by Peer.ID
@@ -27,7 +26,7 @@ type UpdateChannel struct {
 func NewUpdateChannel(metrics *appmetrics.AppMetrics) *UpdateChannel {
 	cMetrics, err := appmetrics.RegisterMetrics(metrics, newMetrics)
 	if err != nil {
-		log().Fatalf("Failed to register updatechannel metrics: %v", err)
+		log.Fatalf("Failed to register updatechannel metrics: %v", err)
 	}
 	return &UpdateChannel{
 		peerChannels: make(map[string]chan *network_map.UpdateMessage),
@@ -38,7 +37,7 @@ func NewUpdateChannel(metrics *appmetrics.AppMetrics) *UpdateChannel {
 
 // SendUpdate sends update message to the peer's channel
 func (p *UpdateChannel) SendUpdate(ctx context.Context, peerID string, update *network_map.UpdateMessage) {
-	log().Debugf("Sending update message to peer %s on public update channel", peerID)
+	log.Debugf("Sending update message to peer %s on public update channel", peerID)
 
 	start := time.Now()
 	var found, dropped bool
@@ -54,13 +53,13 @@ func (p *UpdateChannel) SendUpdate(ctx context.Context, peerID string, update *n
 		found = true
 		select {
 		case channel <- update:
-			log().WithContext(ctx).Debugf("update was sent to channel for peer %s", peerID)
+			log.WithContext(ctx).Debugf("update was sent to channel for peer %s", peerID)
 		default:
 			dropped = true
-			log().WithContext(ctx).Warnf("channel for peer %s is %d full or closed", peerID, len(channel))
+			log.WithContext(ctx).Warnf("channel for peer %s is %d full or closed", peerID, len(channel))
 		}
 	} else {
-		log().WithContext(ctx).Debugf("peer %s has no channel", peerID)
+		log.WithContext(ctx).Debugf("peer %s has no channel", peerID)
 	}
 }
 
@@ -85,7 +84,7 @@ func (p *UpdateChannel) CreateChannel(ctx context.Context, peerID string) chan *
 	channel := make(chan *network_map.UpdateMessage, channelBufferSize)
 	p.peerChannels[peerID] = channel
 
-	log().WithContext(ctx).Debugf("opened updates channel for a peer %s", peerID)
+	log.WithContext(ctx).Debugf("opened updates channel for a peer %s", peerID)
 
 	return channel
 }
@@ -95,11 +94,11 @@ func (p *UpdateChannel) closeChannel(ctx context.Context, peerID string) {
 		delete(p.peerChannels, peerID)
 		close(channel)
 
-		log().WithContext(ctx).Debugf("closed updates channel of a peer %s", peerID)
+		log.WithContext(ctx).Debugf("closed updates channel of a peer %s", peerID)
 		return
 	}
 
-	log().WithContext(ctx).Debugf("closing updates channel: peer %s has no channel", peerID)
+	log.WithContext(ctx).Debugf("closing updates channel: peer %s has no channel", peerID)
 }
 
 // CloseChannels closes updates channel for each given peer

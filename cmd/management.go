@@ -5,13 +5,11 @@ import (
 	"os/signal"
 	"syscall"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/netbirdio/management-refactor/internals/server"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage
 
 var newServer = func() server.Server {
 	return server.NewServer()
@@ -26,17 +24,12 @@ var mgmtCmd = &cobra.Command{
 	Use:   "management",
 	Short: "start NetBird Management Server",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := logging.Init("logging.yaml")
-		if err != nil {
-			log().Debugf("Failed to init logging: %v", err)
-		}
-
 		srv := newServer()
 
 		go func() {
-			log().Info("Starting server on :8080")
+			log.Info("Starting server on :8080")
 			if err := srv.Start(); err != nil {
-				log().Fatalf("Server error: %v", err)
+				log.Fatalf("Server error: %v", err)
 			}
 		}()
 
@@ -44,11 +37,11 @@ var mgmtCmd = &cobra.Command{
 		signal.Notify(stopChan, os.Interrupt, syscall.SIGTERM)
 		<-stopChan
 
-		log().Info("Shutting down server...")
+		log.Info("Shutting down server...")
 		if err := srv.Stop(); err != nil {
-			log().Errorf("Error stopping server: %v", err)
+			log.Errorf("Error stopping server: %v", err)
 		}
-		log().Info("Server stopped gracefully.")
+		log.Info("Server stopped gracefully.")
 
 		return nil
 	},

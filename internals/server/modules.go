@@ -5,6 +5,8 @@ import (
 	"github.com/netbirdio/management-refactor/internals/modules/networks/manager"
 	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
 	resourcesManager "github.com/netbirdio/management-refactor/internals/modules/networks/resources/manager"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/routers"
+	routersManager "github.com/netbirdio/management-refactor/internals/modules/networks/routers/manager"
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	peersManager "github.com/netbirdio/management-refactor/internals/modules/peers/manager"
 	"github.com/netbirdio/management-refactor/internals/modules/users"
@@ -15,7 +17,7 @@ import (
 func (s *BaseServer) NetworksManager() networks.Manager {
 	return Create(s, func() networks.Manager {
 		repo := manager.NewRepository(s.Store())
-		return manager.NewManager(repo)
+		return manager.NewManager(repo, s.ActivityManager(), s.ResourcesManager(), s.RoutersManager())
 	})
 }
 
@@ -23,6 +25,14 @@ func (s *BaseServer) ResourcesManager() resources.Manager {
 	return Create(s, func() resources.Manager {
 		repo := resourcesManager.NewRepository(s.Store())
 		manager := resourcesManager.NewManager(repo, s.Router(), s.NetworksManager())
+		return manager
+	})
+}
+
+func (s *BaseServer) RoutersManager() routers.Manager {
+	return Create(s, func() routers.Manager {
+		repo := routersManager.NewRepository(s.Store())
+		manager := routersManager.NewManager(repo)
 		return manager
 	})
 }

@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/activity/sqlite"
@@ -54,13 +55,14 @@ func (s *BaseServer) Router() *mux.Router {
 	})
 }
 
-func (s *BaseServer) EventStore() activity.Store {
-	return Create(s, func() activity.Store {
+func (s *BaseServer) ActivityManager() *activity.Manager {
+	return Create(s, func() *activity.Manager {
 		ctx := context.Background()
 		store, err := sqlite.NewSQLiteStore(ctx, "dataDir", "encryptionKey")
 		if err != nil {
 			log.Fatalf("error while creating event store: %s", err)
 		}
-		return store
+
+		return activity.NewManager(store)
 	})
 }

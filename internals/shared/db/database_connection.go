@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -28,10 +29,10 @@ type DatabaseConn struct {
 func NewDatabaseConn(ctx context.Context) (*DatabaseConn, error) {
 	cfg, err := configuration.Parse[config]()
 	if err != nil {
-		log().Fatalf("failed to parse config: %v", err)
+		log.Fatalf("failed to parse config: %v", err)
 	}
 
-	log().WithContext(ctx).Infof("using %s store engine", cfg.Engine)
+	log.WithContext(ctx).Infof("using %s store engine", cfg.Engine)
 
 	var db *gorm.DB
 	switch Engine(cfg.Engine) {

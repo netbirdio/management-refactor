@@ -5,11 +5,7 @@ import (
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage
 
 type Store struct {
 	db *gorm.DB

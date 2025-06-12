@@ -1,6 +1,8 @@
 package manager
 
 import (
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/internals/modules/users"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 )

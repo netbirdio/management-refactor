@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/pkg/logging"
 )
 
@@ -23,10 +25,9 @@ type BaseServer struct {
 	afterInit []func(s *BaseServer)
 }
 
-var log = logging.LoggerForThisPackage()
-
 // NewServer initializes and configures a new Server instance
 func NewServer() *BaseServer {
+	logging.InitFromFile("../management-refactor/pkg/logging/logging.properties")
 	return &BaseServer{
 		container: make(map[string]any),
 	}

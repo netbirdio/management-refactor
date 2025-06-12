@@ -23,12 +23,12 @@ func NewManager(repo Repository, router *mux.Router, networkManager networks.Man
 	}
 }
 
-func (m *managerImpl) GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, network *networks.Network) ([]*resources.NetworkResource, error) {
-	return m.repo.GetResourcesByNetworkID(tx, lockingStrength, network.ID)
+func (m *managerImpl) GetNetworkResourcesByNetID(ctx context.Context, tx db.Transaction, lockingStrength db.LockingStrength, id string) ([]*resources.NetworkResource, error) {
+	return m.repo.GetResourcesByNetworkID(tx, lockingStrength, id)
 }
 
-func (m *managerImpl) DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, network *networks.Network) error {
-	resources, err := m.GetNetworkResourcesByNetID(ctx, tx, db.LockingStrengthUpdate, network)
+func (m *managerImpl) DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, accountID string, userID string, id string) error {
+	resources, err := m.GetNetworkResourcesByNetID(ctx, tx, db.LockingStrengthUpdate, id)
 	if err != nil {
 		return err
 	}

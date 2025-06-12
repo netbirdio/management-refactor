@@ -3,13 +3,12 @@ package controller
 import (
 	"context"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/netbirdio/management-refactor/internals/controllers/network_map"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	appmetrics "github.com/netbirdio/management-refactor/internals/shared/metrics"
-	"github.com/netbirdio/management-refactor/pkg/logging"
 )
-
-var log = logging.LoggerForThisPackage
 
 type Controller struct {
 	repo          Repository
@@ -20,7 +19,7 @@ type Controller struct {
 func NewController(store *db.Store, metrics *appmetrics.AppMetrics, updateChannel network_map.UpdateChannel) *Controller {
 	cMetrics, err := appmetrics.RegisterMetrics(metrics, newMetrics)
 	if err != nil {
-		log().Fatalf("Failed to register app metrics: %v", err)
+		log.Fatalf("Failed to register app metrics: %v", err)
 	}
 	return &Controller{
 		repo:          newRepository(store, cMetrics),
@@ -37,7 +36,7 @@ func (c *Controller) CalculateNetworkMap(accountID string) (*network_map.Network
 
 	// Do calc on data
 
-	log().Tracef("Calculating network map for account on public")
+	log.Tracef("Calculating network map for account on public")
 
 	return &network_map.NetworkMap{}, nil
 }
@@ -45,7 +44,7 @@ func (c *Controller) CalculateNetworkMap(accountID string) (*network_map.Network
 func (c *Controller) UpdatePeers(ctx context.Context, accountID string) error {
 	_, err := c.CalculateNetworkMap(accountID)
 	if err != nil {
-		log().Errorf("Failed to calculate network map for account %s: %v", accountID, err)
+		log.Errorf("Failed to calculate network map for account %s: %v", accountID, err)
 		return err
 	}
 	c.UpdateChannel.SendUpdate(ctx, accountID, &network_map.UpdateMessage{})

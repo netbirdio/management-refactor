@@ -15,12 +15,12 @@ import (
 
 type managerImpl struct {
 	repo            Repository
-	activityManager activity.Manager
+	activityManager *activity.Manager
 	resourceManager resources.Manager
 	routerManager   routers.Manager
 }
 
-func NewManager(repo Repository, activityManager activity.Manager, resourceManager resources.Manager, routerManager routers.Manager) networks.Manager {
+func NewManager(repo Repository, activityManager *activity.Manager, resourceManager resources.Manager, routerManager routers.Manager) networks.Manager {
 	return &managerImpl{
 		repo:            repo,
 		activityManager: activityManager,
