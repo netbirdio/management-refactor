@@ -7,17 +7,25 @@ import (
 	"github.com/rs/xid"
 
 	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/resources"
+	"github.com/netbirdio/management-refactor/internals/modules/networks/routers"
+	"github.com/netbirdio/management-refactor/internals/shared/activity"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
-	"github.com/netbirdio/management-refactor/internals/shared/hook"
 )
 
 type managerImpl struct {
-	repo Repository
+	repo            Repository
+	activityManager activity.Manager
+	resourceManager resources.Manager
+	routerManager   routers.Manager
 }
 
-func NewManager(repo Repository) networks.Manager {
+func NewManager(repo Repository, activityManager activity.Manager, resourceManager resources.Manager, routerManager routers.Manager) networks.Manager {
 	return &managerImpl{
-		repo: repo,
+		repo:            repo,
+		activityManager: activityManager,
+		resourceManager: resourceManager,
+		routerManager:   routerManager,
 	}
 }
 
@@ -55,25 +63,24 @@ func (m *managerImpl) UpdateNetwork(ctx context.Context, tx db.Transaction, user
 
 func (m *managerImpl) DeleteNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error {
 	return db.WithTx(m.repo.Store(), tx, func(tx db.Transaction) error {
-		network := &networks.Network{ID: networkID}
 
-		ev := &networks.NetworkEvent{
-			Context: ctx,
-			Tx:      tx,
-			Network: network,
+		err := m.routerManager.DeleteRoutersInNetwork(ctx, tx, accountID, userID, networkID)
+		if err != nil {
+			return fmt.Errorf("failed to delete routers in network: %w", err)
 		}
 
-		err := m.OnNetworkDelete().Trigger(ev, func(ne *networks.NetworkEvent) error {
-			if err := m.repo.DeleteNetwork(ne.Tx, ne.Network); err != nil {
-				return fmt.Errorf("failed to delete network: %w", err)
-			}
+		err = m.resourceManager.DeleteResourcesInNetwork(ctx, tx, accountID, userID, networkID)
+		if err != nil {
+			return fmt.Errorf("failed to delete resources in network: %w", err)
+		}
 
-			tx.AddEvent(func() {
-				// addActivityEvent("Network deleted")
-				// noop
-			})
-			return nil
-		})
+		network := &networks.Network{ID: networkID}
+		err = m.repo.DeleteNetwork(tx, network)
+		if err != nil {
+			return err
+		}
+
+		m.activityManager.StoreEvent(ctx, tx, userID, networkID, accountID, activity.NetworkDeleted, network.EventMeta())
 
 		return err
 	})

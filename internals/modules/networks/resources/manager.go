@@ -17,5 +17,5 @@ type Manager interface {
 
 	// Delete
 	DeleteResource(ctx context.Context, tx db.Transaction, resource *NetworkResource) error
-	DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, network *networks.Network) error
+	DeleteResourcesInNetwork(ctx context.Context, tx db.Transaction, accountID, userID, networkID string) error
 }
