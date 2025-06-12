@@ -5,12 +5,13 @@
 package manager
 
 import (
-	context "context"
-	reflect "reflect"
+	"context"
+	"reflect"
 
-	gomock "github.com/golang/mock/gomock"
-	templates "github.com/netbirdio/management-refactor/internals/modules/templates"
-	db "github.com/netbirdio/management-refactor/internals/shared/db"
+	"github.com/golang/mock/gomock"
+
+	"github.com/netbirdio/management-refactor/internals/modules/templates"
+	"github.com/netbirdio/management-refactor/internals/shared/db"
 )
 
 // MockRepository is a mock of Repository interface.

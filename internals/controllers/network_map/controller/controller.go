@@ -28,7 +28,7 @@ func NewController(store *db.Store, metrics *appmetrics.AppMetrics, updateChanne
 	}
 }
 
-func (c *Controller) CalculateNetworkMap(accountID string) (*network_map.NetworkMap, error) {
+func (c *Controller) CalculateNetworkMap(ctx context.Context, accountID string) (*network_map.NetworkMap, error) {
 	_, err := c.repo.GetNetworkMapData(accountID)
 	if err != nil {
 		// usually return error
@@ -36,13 +36,13 @@ func (c *Controller) CalculateNetworkMap(accountID string) (*network_map.Network
 
 	// Do calc on data
 
-	log.Tracef("Calculating network map for account on public")
+	log.WithContext(ctx).Tracef("Calculating network map for account on public")
 
 	return &network_map.NetworkMap{}, nil
 }
 
 func (c *Controller) UpdatePeers(ctx context.Context, accountID string) error {
-	_, err := c.CalculateNetworkMap(accountID)
+	_, err := c.CalculateNetworkMap(ctx, accountID)
 	if err != nil {
 		log.Errorf("Failed to calculate network map for account %s: %v", accountID, err)
 		return err
