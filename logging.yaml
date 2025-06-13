@@ -1,5 +1,0 @@
-log_levels:
-  default: trace
-  management-refactor/internals/shared/activity: error
-  management-refactor/internals/shared/db: error
-  management-integrations-refactor/integrations: trace
