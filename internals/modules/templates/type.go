@@ -1,7 +1,7 @@
 package templates
 
 import (
-	"github.com/netbirdio/netbird/management/server/http/api"
+	"github.com/netbirdio/netbird/shared/management/http/api"
 )
 
 type Template struct {

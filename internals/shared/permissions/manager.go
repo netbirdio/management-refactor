@@ -6,9 +6,6 @@ import (
 	"context"
 	"net/http"
 
-	nbcontext "github.com/netbirdio/netbird/management/server/context"
-	"github.com/netbirdio/netbird/management/server/http/util"
-	"github.com/netbirdio/netbird/management/server/status"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/management-refactor/internals/modules/users"
@@ -17,6 +14,9 @@ import (
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/roles"
+	nbcontext "github.com/netbirdio/netbird/management/server/context"
+	"github.com/netbirdio/netbird/shared/management/http/util"
+	"github.com/netbirdio/netbird/shared/management/status"
 )
 
 type Manager interface {

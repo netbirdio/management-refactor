@@ -3,10 +3,10 @@ package routers
 import (
 	"errors"
 
-	"github.com/netbirdio/netbird/management/server/http/api"
 	"github.com/rs/xid"
 
 	"github.com/netbirdio/management-refactor/internals/modules/networks"
+	"github.com/netbirdio/netbird/shared/management/http/api"
 )
 
 type NetworkRouter struct {

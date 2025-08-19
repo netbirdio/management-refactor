@@ -5,13 +5,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	nbcontext "github.com/netbirdio/netbird/management/server/context"
 
 	"github.com/netbirdio/management-refactor/internals/modules/templates"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/modules"
 	"github.com/netbirdio/management-refactor/internals/shared/permissions/operations"
+	nbcontext "github.com/netbirdio/netbird/management/server/context"
 )
 
 type handler struct {
