@@ -5,11 +5,11 @@ import (
 	"sync"
 	"time"
 
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/netbirdio/management-refactor/internals/modules/peers"
 	"github.com/netbirdio/management-refactor/internals/shared/db"
+	nbpeer "github.com/netbirdio/netbird/management/server/peer"
 )
 
 const (

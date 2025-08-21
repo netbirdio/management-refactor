@@ -6,13 +6,13 @@ import (
 	"net/netip"
 	"regexp"
 
-	"github.com/netbirdio/netbird/management/server/http/api"
-	nbpeer "github.com/netbirdio/netbird/management/server/peer"
-	"github.com/netbirdio/netbird/route"
 	"github.com/rs/xid"
 
 	"github.com/netbirdio/management-refactor/internals/modules/networks"
 	"github.com/netbirdio/management-refactor/internals/modules/networks/routers"
+	nbpeer "github.com/netbirdio/netbird/management/server/peer"
+	"github.com/netbirdio/netbird/route"
+	"github.com/netbirdio/netbird/shared/management/http/api"
 )
 
 type NetworkResourceType string
