@@ -12,7 +12,7 @@ require (
 	github.com/hashicorp/go-secure-stdlib/base62 v0.1.2
 	github.com/magiconair/properties v1.8.10
 	github.com/mattn/go-sqlite3 v1.14.22
-	github.com/netbirdio/netbird v0.54.3-0.20250819152936-be01f40b0667
+	github.com/netbirdio/netbird v0.57.0
 	github.com/prometheus/client_golang v1.22.0
 	github.com/rs/xid v1.3.0
 	github.com/sirupsen/logrus v1.9.3
@@ -126,9 +126,9 @@ require (
 	golang.org/x/tools v0.35.0 // indirect
 	golang.zx2c4.com/wireguard/windows v0.5.3 // indirect
 	google.golang.org/api v0.215.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20241223144023-3abc09e42ca8 // indirect
-	google.golang.org/grpc v1.69.0 // indirect
-	google.golang.org/protobuf v1.36.6 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
+	google.golang.org/grpc v1.73.0 // indirect
+	google.golang.org/protobuf v1.36.8 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
